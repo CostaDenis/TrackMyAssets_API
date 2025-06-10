@@ -1,6 +1,16 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using TrackMyAssets_API;
 
-app.MapGet("/", () => "Hello World!");
 
-app.Run();
+IHostBuilder CreateHostBuilder(string[] args)
+{
+    return Host.CreateDefaultBuilder(args)
+    .ConfigureWebHostDefaults(webBuilder =>
+    {
+        webBuilder.UseStartup<StartUp>();
+
+    });
+}
+
+CreateHostBuilder(args).Build().Run();
+
