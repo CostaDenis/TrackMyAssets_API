@@ -11,5 +11,6 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces
         User? Login(LoginDTO loginDTO);
         void Create(User user);
         void Update(User user);
+        void DeleteOwnUser(User user);
     }
 }
