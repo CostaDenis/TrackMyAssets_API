@@ -12,5 +12,7 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces
         List<Asset> GetAll(int? page = 1, string? name = null, string? symbol = null);
         void Update(Asset asset);
         void Delete(Asset asset);
+        AssetTransaction AddUnits(Guid assetId, double unit, string? note = null);
+        AssetTransaction RemoveUnis(Guid assetId, double unit, string? note = null);
     }
 }

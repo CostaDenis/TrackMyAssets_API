@@ -10,7 +10,7 @@ namespace TrackMyAssets_API.Domain.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = default!;
-        public string Symbol { get; set; } = default!;
+        public string? Symbol { get; set; }
         public EAsset Type { get; set; }
         public double Units { get; set; }
     }
