@@ -1,16 +1,28 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API;
+using TrackMyAssets_API.Data;
+using TrackMyAssets_API.Domain.ModelsViews;
 
 
-IHostBuilder CreateHostBuilder(string[] args)
-{
-    return Host.CreateDefaultBuilder(args)
-    .ConfigureWebHostDefaults(webBuilder =>
-    {
-        webBuilder.UseStartup<StartUp>();
+var builder = WebApplication.CreateBuilder(args);
 
-    });
-}
+var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-CreateHostBuilder(args).Build().Run();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(ConnectionString));
 
+//Adiciona Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+app.MapGet("/", () => Results.Json(new HomeModelView())).WithTags("Home").AllowAnonymous();
+
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+
+app.Run();
