@@ -17,6 +17,7 @@ using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
+using TrackMyAssets_API.Domain.Enums;
 using TrackMyAssets_API.Domain.ModelsViews;
 
 #region Builder
@@ -46,6 +47,7 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAssetService, AssetService>();
 
 //Adiciona Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -227,7 +229,7 @@ app.MapPost("/users", ([FromBody] UserDTO userDTO, IUserService userService) =>
 
     userService.Create(user);
 
-    return Results.Created($"/users/{user.Id}", user); ;
+    return Results.Created($"/users/{user.Id}", user);
 
 }).AllowAnonymous().WithTags("User");
 
@@ -267,6 +269,105 @@ app.MapDelete("/users", (HttpContext http, IUserService userService) =>
 }).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("User");
 
 
+#endregion
+
+
+#region Asset
+
+app.MapPost("/assets", ([FromBody] AssetDTO assetDTO, IAssetService assetService) =>
+{
+
+    if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
+    {
+        return Results.BadRequest("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency");
+    }
+
+    var asset = new Asset
+    {
+        Name = assetDTO.Name,
+        Symbol = assetDTO.Symbol,
+        Type = parsedType
+    };
+
+    assetService.Create(asset);
+
+    return Results.Created($"/assets/{asset.Id}", asset);
+
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
+
+app.MapGet("/assets", ([FromQuery] int? page, IAssetService AssetService) =>
+{
+    var assetsModelView = new List<AssetModelView>();
+    var assets = AssetService.GetAll(page);
+
+    foreach (var assts in assets)
+    {
+        assetsModelView.Add(new AssetModelView
+        {
+            Name = assts.Name,
+            Symbol = assts.Symbol!,
+            Type = assts.Type.ToString()
+        });
+    }
+
+    return Results.Ok(assets);
+
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
+
+app.MapGet("/assets/{id}", ([FromRoute] Guid id, IAssetService assetService) =>
+{
+
+    var asset = assetService.GetById(id);
+
+    if (asset == null)
+        return Results.NotFound();
+
+    return Results.Ok(new AssetModelView
+    {
+        Name = asset.Name,
+        Symbol = asset.Symbol!,
+        Type = asset.Type.ToString()
+    });
+
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
+
+app.MapPut("/assets/{id}", ([FromBody] AssetDTO assetDTO, Guid id, IAssetService assetService) =>
+{
+
+    var asset = assetService.GetById(id);
+    if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
+    {
+        return Results.BadRequest("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency");
+    }
+
+    if (asset == null)
+        return Results.NotFound();
+
+
+    asset.Name = assetDTO.Name;
+    asset.Symbol = assetDTO.Symbol;
+    asset.Type = parsedType;
+
+    assetService.Update(asset);
+
+    return Results.Ok(asset);
+
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
+
+app.MapDelete("/asset/{id}", ([FromRoute] Guid id, IAssetService assetService) =>
+{
+
+    var asset = assetService.GetById(id);
+
+    if (asset == null)
+        return Results.NotFound();
+
+    assetService.Delete(asset);
+
+    return Results.NoContent();
+
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
+;
 #endregion
 
 app.UseSwagger();
