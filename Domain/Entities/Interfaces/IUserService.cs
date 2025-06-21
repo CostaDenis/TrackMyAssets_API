@@ -9,8 +9,9 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces
     public interface IUserService
     {
         User? Login(LoginDTO loginDTO);
-        void Update(User user);
         void Create(User user);
+        User GetById(Guid id);
+        void Update(User user);
         void DeleteOwnUser(User user);
     }
 }

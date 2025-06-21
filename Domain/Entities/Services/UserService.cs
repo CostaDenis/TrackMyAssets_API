@@ -26,14 +26,20 @@ namespace TrackMyAssets_API.Domain.Entities.Services
             return user;
         }
 
-        public void Update(User user)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Create(User user)
         {
             _context.Users.Add(user);
+            _context.SaveChanges();
+        }
+
+        public User GetById(Guid id)
+        {
+            return _context.Users.Where(x => x.Id == id).FirstOrDefault()!;
+        }
+
+        public void Update(User user)
+        {
+            _context.Users.Update(user);
             _context.SaveChanges();
         }
 

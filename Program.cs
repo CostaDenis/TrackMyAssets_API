@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
@@ -90,7 +91,7 @@ app.MapGet("/", () => Results.Json(new HomeModelView())).WithTags("Home").AllowA
 
 #region Administrators
 
-string GenerateTokenJwt(Administrator administrator)
+string GenerateTokenJwt(Guid id, string email, string role)
 {
     if (string.IsNullOrEmpty(key))
     {
@@ -101,8 +102,9 @@ string GenerateTokenJwt(Administrator administrator)
     var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
     var claims = new List<Claim>
     {
-        new Claim("Email", administrator.Email),
-        new Claim(ClaimTypes.Role, "Admin")
+        new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+        new Claim(ClaimTypes.Email, email),
+        new Claim(ClaimTypes.Role, role)
     };
 
     var token = new JwtSecurityToken(
@@ -123,7 +125,7 @@ app.MapPost("/administrators/login", ([FromBody] LoginDTO loginDTO, IAdministrat
         return Results.Unauthorized();
     }
 
-    string token = GenerateTokenJwt(adm);
+    string token = GenerateTokenJwt(adm.Id, adm.Email, "Admin");
 
     return Results.Ok(new LoggedAdministratorModelView
     {
@@ -204,12 +206,13 @@ app.MapPost("/users/login", ([FromBody] LoginDTO loginDTO, IUserService userServ
     {
         return Results.Unauthorized();
     }
+    string token = GenerateTokenJwt(user.Id, user.Email, "User");
 
     return Results.Ok(new LoggedUserModelView
     {
         Id = user.Id,
         Email = user.Email,
-        Password = user.Password
+        Token = token
     });
 
 }).AllowAnonymous().WithTags("User");
@@ -228,13 +231,40 @@ app.MapPost("/users", ([FromBody] UserDTO userDTO, IUserService userService) =>
 
 }).AllowAnonymous().WithTags("User");
 
-// app.MapDelete("/users", ([FromBody] UserDTO userDTO, IUserService userService) =>
-// {
-//     var user = userService.
+app.MapPut("/users", ([FromBody] UserDTO userDTO, HttpContext http, IUserService userService) =>
+{
 
+    var userIdClaim = http.User.FindFirst(ClaimTypes.NameIdentifier);
 
-//     userService.DeleteOwnUser();
-// });
+    if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+    {
+        return Results.Unauthorized();
+    }
+
+    var user = userService.GetById(userId);
+
+    user.Email = userDTO.Email;
+    user.Password = userDTO.Password;
+
+    userService.Update(user);
+
+    return Results.Ok(user);
+
+}).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("User");
+
+app.MapDelete("/users", (HttpContext http, IUserService userService) =>
+{
+    var userIdClaim = http.User.FindFirst(ClaimTypes.NameIdentifier);
+
+    if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+    {
+        return Results.Unauthorized();
+    }
+    var user = userService.GetById(userId);
+    userService.DeleteOwnUser(user);
+
+    return Results.NoContent();
+}).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("User");
 
 
 #endregion
