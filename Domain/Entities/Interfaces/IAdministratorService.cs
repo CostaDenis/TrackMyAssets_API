@@ -9,11 +9,9 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces
     public interface IAdministratorService
     {
         Administrator? Login(LoginDTO loginDTO);
-        void CreateUser(User user);
         List<User> GetAllUsers(int? page);
         User? GetUserById(Guid id);
-        void UpdateUser(User user);
-        void DeleteUser(Guid id);
+        void DeleteUser(User id);
 
     }
 }

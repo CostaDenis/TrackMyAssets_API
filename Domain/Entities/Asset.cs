@@ -22,8 +22,6 @@ namespace TrackMyAssets_API.Domain.Entities
         [Required]
         public EAsset Type { get; set; }
 
-        [Required]
-        [Range(0, double.MaxValue, ErrorMessage = "O número de unidades não pode ser negativo.")]
-        public double Units { get; set; }
+        public List<UserAsset> UserAssets { get; set; } = new();
     }
 }

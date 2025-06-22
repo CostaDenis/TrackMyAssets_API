@@ -9,10 +9,8 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces
     {
         void Create(Asset asset);
         Asset? GetById(Guid id);
-        List<Asset> GetAll(int? page = 1, string? name = null, string? symbol = null);
+        List<Asset> GetAll(int? page = 1);
         void Update(Asset asset);
         void Delete(Asset asset);
-        AssetTransaction AddUnits(Guid assetId, double unit, string? note = null);
-        AssetTransaction RemoveUnis(Guid assetId, double unit, string? note = null);
     }
 }

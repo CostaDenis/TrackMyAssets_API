@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TrackMyAssets_API.Domain.Entities.DTOs
+namespace TrackMyAssets_API.Domain.ModelsViews
 {
-    public class LoginDTO
+    public record UserModelView
     {
+        public Guid Id { get; set; }
         public string Email { get; set; } = default!;
-        public string Password { get; set; } = default!;
     }
 }

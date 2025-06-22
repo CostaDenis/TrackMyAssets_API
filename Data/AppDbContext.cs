@@ -22,6 +22,7 @@ namespace TrackMyAssets_API.Data
         public DbSet<Administrator> Administrators { get; set; } = default!;
         public DbSet<Asset> Assets { get; set; } = default!;
         public DbSet<AssetTransaction> AssetTransactions { get; set; } = default!;
+        public DbSet<UserAsset> UserAssets { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
