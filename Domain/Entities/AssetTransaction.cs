@@ -13,12 +13,22 @@ namespace TrackMyAssets_API.Domain.Entities
 
         [Required]
         public Guid AssetId { get; set; }
-        public Asset? Asset { get; set; }
+
+        [Required]
+        public Asset Asset { get; set; }
+
+        [Required]
+        public Guid UserId { get; set; }
+
+        [Required]
+        public User User { get; set; }
 
         [Required]
         public double UnitsChanged { get; set; }  // Positivo para adições, negativo para remoções
         public DateTime Date { get; set; } = DateTime.UtcNow;
         public string Type => UnitsChanged >= 0 ? "Addition" : "Removal";
+
+        [StringLength(500, ErrorMessage = "A observação não pode execder 500 caracteres.")]
         public string? Note { get; set; }
     }
 }

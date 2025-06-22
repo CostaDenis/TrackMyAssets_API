@@ -45,7 +45,7 @@ namespace TrackMyAssets_API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("427c99fd-a612-407a-95ec-4220bf357bf2"),
+                            Id = new Guid("9364d59b-f27f-441c-846c-c60a4829f042"),
                             Email = "adm@teste.com",
                             Password = "123456"
                         });
@@ -69,9 +69,6 @@ namespace TrackMyAssets_API.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<double>("Units")
-                        .HasColumnType("float");
-
                     b.HasKey("Id");
 
                     b.ToTable("Assets");
@@ -90,14 +87,20 @@ namespace TrackMyAssets_API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<double>("UnitsChanged")
                         .HasColumnType("float");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AssetId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("AssetTransactions");
                 });
@@ -123,6 +126,30 @@ namespace TrackMyAssets_API.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.UserAsset", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Units")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAsset");
+                });
+
             modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.AssetTransaction", b =>
                 {
                     b.HasOne("TrackMyAssets_API.Domain.Entities.Asset", "Asset")
@@ -131,7 +158,39 @@ namespace TrackMyAssets_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TrackMyAssets_API.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Asset");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.UserAsset", b =>
+                {
+                    b.HasOne("TrackMyAssets_API.Domain.Entities.Asset", "Asset")
+                        .WithMany("UserAssets")
+                        .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrackMyAssets_API.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Asset");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.Asset", b =>
+                {
+                    b.Navigation("UserAssets");
                 });
 #pragma warning restore 612, 618
         }
