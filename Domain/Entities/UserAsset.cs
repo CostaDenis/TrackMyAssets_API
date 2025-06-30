@@ -15,13 +15,13 @@ namespace TrackMyAssets_API.Domain.Entities
         public Guid UserId { get; set; }
 
         [Required]
-        public User User { get; set; }
+        public User? User { get; set; }
 
         [Required]
         public Guid AssetId { get; set; }
 
         [Required]
-        public Asset Asset { get; set; }
+        public Asset? Asset { get; set; }
 
         [Required]
         [Range(0, double.MaxValue)]

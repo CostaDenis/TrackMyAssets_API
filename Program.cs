@@ -19,6 +19,7 @@ using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
 using TrackMyAssets_API.Domain.Enums;
 using TrackMyAssets_API.Domain.ModelsViews;
+using TrackMyAssets_API.Infrastructure;
 
 #region Builder
 
@@ -48,6 +49,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAssetService, AssetService>();
+builder.Services.AddScoped<IUserAssetService, UserAssetService>();
 
 //Adiciona Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -236,14 +238,12 @@ app.MapPost("/users", ([FromBody] UserDTO userDTO, IUserService userService) =>
 app.MapPut("/users", ([FromBody] UserDTO userDTO, HttpContext http, IUserService userService) =>
 {
 
-    var userIdClaim = http.User.FindFirst(ClaimTypes.NameIdentifier);
+    var userId = JwtUtils.GetUserId(http);
 
-    if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
-    {
+    if (userId == null)
         return Results.Unauthorized();
-    }
 
-    var user = userService.GetById(userId);
+    var user = userService.GetById(userId.Value);
 
     user.Email = userDTO.Email;
     user.Password = userDTO.Password;
@@ -256,13 +256,12 @@ app.MapPut("/users", ([FromBody] UserDTO userDTO, HttpContext http, IUserService
 
 app.MapDelete("/users", (HttpContext http, IUserService userService) =>
 {
-    var userIdClaim = http.User.FindFirst(ClaimTypes.NameIdentifier);
+    var userId = JwtUtils.GetUserId(http);
 
-    if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
-    {
+    if (userId == null)
         return Results.Unauthorized();
-    }
-    var user = userService.GetById(userId);
+
+    var user = userService.GetById(userId.Value);
     userService.DeleteOwnUser(user);
 
     return Results.NoContent();
@@ -354,7 +353,7 @@ app.MapPut("/assets/{id}", ([FromBody] AssetDTO assetDTO, Guid id, IAssetService
 
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
 
-app.MapDelete("/asset/{id}", ([FromRoute] Guid id, IAssetService assetService) =>
+app.MapDelete("/assets/{id}", ([FromRoute] Guid id, IAssetService assetService) =>
 {
 
     var asset = assetService.GetById(id);
@@ -367,7 +366,88 @@ app.MapDelete("/asset/{id}", ([FromRoute] Guid id, IAssetService assetService) =
     return Results.NoContent();
 
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
-;
+
+#endregion
+
+
+#region UserAsset
+
+app.MapPost("/users/assets", ([FromBody] UserAssetAddDTO userAssetDTO, HttpContext http, IAssetService assetService, IUserAssetService userAssetService) =>
+{
+    var userId = JwtUtils.GetUserId(http);
+
+    if (userId == null)
+        return Results.Unauthorized();
+
+    if (assetService.GetById(userAssetDTO.AssetId) == null)
+        return Results.NotFound();
+
+
+    var result = userAssetService.AddUnits(userAssetDTO.AssetId, userId.Value, userAssetDTO.Units, userAssetDTO.Note);
+
+    return Results.Ok(result);
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("UserAsset");
+
+app.MapDelete("/users/assets", ([FromBody] UserAssetRemoveDTO userAssetDTO, HttpContext http, IUserAssetService userAssetService) =>
+{
+    var userId = JwtUtils.GetUserId(http);
+
+    if (userId == null)
+        return Results.Unauthorized();
+
+
+    var result = userAssetService.RemoveUnits(userAssetDTO.AssetId, userId.Value, userAssetDTO.Units, userAssetDTO.Note);
+
+    return Results.Ok(result);
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("UserAsset");
+
+app.MapGet("/users/assets", (HttpContext http, IUserAssetService userAssetService) =>
+{
+    var userId = JwtUtils.GetUserId(http);
+
+    if (userId == null)
+        return Results.Unauthorized();
+
+    var userAssets = userAssetService.UserAssets(userId.Value);
+    var userAssetsModelView = new List<UserAssetModelView>();
+
+    if (userAssets == null)
+        return Results.NotFound();
+
+    foreach (var usr in userAssets)
+    {
+        userAssetsModelView.Add(new UserAssetModelView
+        {
+            UserId = usr.UserId,
+            AssetId = usr.AssetId,
+            Units = usr.Units
+        });
+    }
+
+    return Results.Ok(userAssets);
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("UserAsset");
+
+app.MapGet("/users/assets/{assetId}", ([FromRoute] Guid assetId, HttpContext http, IUserAssetService userAssetService) =>
+{
+    var userId = JwtUtils.GetUserId(http);
+
+    if (userId == null)
+        return Results.Unauthorized();
+
+    var userAsset = userAssetService.GetUserAssetByAssetId(userId.Value, assetId);
+
+    if (userAsset == null)
+        return Results.NotFound();
+
+    return Results.Ok(new UserAssetModelView
+    {
+        UserId = userAsset.UserId,
+        AssetId = userAsset.AssetId,
+        Units = userAsset.Units
+    });
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("UserAsset");
+
+
 #endregion
 
 app.UseSwagger();

@@ -40,6 +40,16 @@ namespace TrackMyAssets_API.Domain.Entities.Services
                 Note = note
             };
 
+            var userAsset = new UserAsset
+            {
+                UserId = userId,
+                AssetId = assetId,
+                Units = units
+            };
+
+            _context.UserAssets.Add(userAsset);
+            _context.SaveChanges();
+
             return AssetTransaction;
         }
 
@@ -63,6 +73,16 @@ namespace TrackMyAssets_API.Domain.Entities.Services
                 UnitsChanged = units,
                 Note = note
             };
+
+            var userAsset = new UserAsset
+            {
+                UserId = userId,
+                AssetId = assetId,
+                Units = units
+            };
+
+            _context.UserAssets.Add(userAsset);
+            _context.SaveChanges();
 
             return AssetTransaction;
         }
