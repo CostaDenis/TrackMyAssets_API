@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackMyAssets_API.Migrations
 {
     /// <inheritdoc />
-    public partial class v2 : Migration
+    public partial class v4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,7 +58,7 @@ namespace TrackMyAssets_API.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UnitsChanged = table.Column<double>(type: "float", nullable: false),
+                    UnitsChanged = table.Column<decimal>(type: "decimal(18,6)", precision: 18, scale: 6, nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
@@ -80,25 +80,25 @@ namespace TrackMyAssets_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserAsset",
+                name: "UserAssets",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Units = table.Column<double>(type: "float", nullable: false)
+                    Units = table.Column<decimal>(type: "decimal(18,6)", precision: 18, scale: 6, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserAsset", x => x.Id);
+                    table.PrimaryKey("PK_UserAssets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserAsset_Assets_AssetId",
+                        name: "FK_UserAssets_Assets_AssetId",
                         column: x => x.AssetId,
                         principalTable: "Assets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserAsset_Users_UserId",
+                        name: "FK_UserAssets_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -108,7 +108,7 @@ namespace TrackMyAssets_API.Migrations
             migrationBuilder.InsertData(
                 table: "Administrators",
                 columns: new[] { "Id", "Email", "Password" },
-                values: new object[] { new Guid("9364d59b-f27f-441c-846c-c60a4829f042"), "adm@teste.com", "123456" });
+                values: new object[] { new Guid("e492aaa5-aa82-424d-8254-43227829c12e"), "adm@teste.com", "123456" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AssetTransactions_AssetId",
@@ -121,13 +121,13 @@ namespace TrackMyAssets_API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAsset_AssetId",
-                table: "UserAsset",
+                name: "IX_UserAssets_AssetId",
+                table: "UserAssets",
                 column: "AssetId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAsset_UserId",
-                table: "UserAsset",
+                name: "IX_UserAssets_UserId",
+                table: "UserAssets",
                 column: "UserId");
         }
 
@@ -141,7 +141,7 @@ namespace TrackMyAssets_API.Migrations
                 name: "AssetTransactions");
 
             migrationBuilder.DropTable(
-                name: "UserAsset");
+                name: "UserAssets");
 
             migrationBuilder.DropTable(
                 name: "Assets");

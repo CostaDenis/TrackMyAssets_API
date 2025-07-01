@@ -12,8 +12,8 @@ using TrackMyAssets_API.Data;
 namespace TrackMyAssets_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250622195541_v2")]
-    partial class v2
+    [Migration("20250701001412_v4")]
+    partial class v4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,7 +48,7 @@ namespace TrackMyAssets_API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9364d59b-f27f-441c-846c-c60a4829f042"),
+                            Id = new Guid("e492aaa5-aa82-424d-8254-43227829c12e"),
                             Email = "adm@teste.com",
                             Password = "123456"
                         });
@@ -93,8 +93,9 @@ namespace TrackMyAssets_API.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<double>("UnitsChanged")
-                        .HasColumnType("float");
+                    b.Property<decimal>("UnitsChanged")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -138,8 +139,9 @@ namespace TrackMyAssets_API.Migrations
                     b.Property<Guid>("AssetId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("Units")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Units")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -150,7 +152,7 @@ namespace TrackMyAssets_API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserAsset");
+                    b.ToTable("UserAssets");
                 });
 
             modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.AssetTransaction", b =>

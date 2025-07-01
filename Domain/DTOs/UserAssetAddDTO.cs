@@ -10,8 +10,8 @@ namespace TrackMyAssets_API.Domain.DTOs
     {
         public Guid AssetId { get; set; }
 
-        [Range(0.0001, double.MaxValue, ErrorMessage = "Quantidade inválida.")]
-        public double Units { get; set; }
+        [Range(0.0001, (double)decimal.MaxValue, ErrorMessage = "Quantidade inválida.")]
+        public decimal Units { get; set; }
 
         public string? Note { get; set; }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TrackMyAssets_API.Domain.Entities
@@ -15,16 +16,18 @@ namespace TrackMyAssets_API.Domain.Entities
         public Guid AssetId { get; set; }
 
         [Required]
+        [JsonIgnore]
         public Asset? Asset { get; set; }
 
         [Required]
         public Guid UserId { get; set; }
 
         [Required]
+        [JsonIgnore]
         public User? User { get; set; }
 
         [Required]
-        public double UnitsChanged { get; set; }  // Positivo para adições, negativo para remoções
+        public decimal UnitsChanged { get; set; }  // Positivo para adições, negativo para remoções
         public DateTime Date { get; set; } = DateTime.UtcNow;
         public string Type => UnitsChanged >= 0 ? "Addition" : "Removal";
 

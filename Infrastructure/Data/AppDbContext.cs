@@ -33,6 +33,14 @@ namespace TrackMyAssets_API.Data
                     Password = "123456"
                 }
             );
+
+            modelBuilder.Entity<UserAsset>()
+                .Property(u => u.Units)
+                .HasPrecision(18, 6);
+
+            modelBuilder.Entity<AssetTransaction>()
+                .Property(a => a.UnitsChanged)
+                .HasPrecision(18, 6);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

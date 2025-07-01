@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TrackMyAssets_API.Domain.Enums;
 
@@ -22,6 +23,7 @@ namespace TrackMyAssets_API.Domain.Entities
         [Required]
         public EAsset Type { get; set; }
 
+        [JsonIgnore]
         public List<UserAsset> UserAssets { get; set; } = new();
     }
 }
