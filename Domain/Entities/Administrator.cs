@@ -16,7 +16,7 @@ namespace TrackMyAssets_API.Domain.Entities
         public string Email { get; set; } = default!;
 
         [Required]
-        [StringLength(50, ErrorMessage = "A senha não pode exceder 50 caracteres.")]
+        [StringLength(256, ErrorMessage = "A senha não pode exceder 256 caracteres.")]
         public string Password { get; set; } = default!;
     }
 }

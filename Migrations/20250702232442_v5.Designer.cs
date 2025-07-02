@@ -12,8 +12,8 @@ using TrackMyAssets_API.Data;
 namespace TrackMyAssets_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250701001412_v4")]
-    partial class v4
+    [Migration("20250702232442_v5")]
+    partial class v5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,8 +38,8 @@ namespace TrackMyAssets_API.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
@@ -48,7 +48,7 @@ namespace TrackMyAssets_API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e492aaa5-aa82-424d-8254-43227829c12e"),
+                            Id = new Guid("f71bb948-d066-49c4-9336-069f76899320"),
                             Email = "adm@teste.com",
                             Password = "123456"
                         });
@@ -122,8 +122,8 @@ namespace TrackMyAssets_API.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 

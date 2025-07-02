@@ -35,8 +35,8 @@ namespace TrackMyAssets_API.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
@@ -45,7 +45,7 @@ namespace TrackMyAssets_API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e492aaa5-aa82-424d-8254-43227829c12e"),
+                            Id = new Guid("f71bb948-d066-49c4-9336-069f76899320"),
                             Email = "adm@teste.com",
                             Password = "123456"
                         });
@@ -119,8 +119,8 @@ namespace TrackMyAssets_API.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 

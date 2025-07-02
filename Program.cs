@@ -224,15 +224,10 @@ app.MapPost("/users/login", ([FromBody] LoginDTO loginDTO, IUserService userServ
 
 app.MapPost("/users", ([FromBody] UserDTO userDTO, IUserService userService) =>
 {
-    var user = new User
-    {
-        Email = userDTO.Email,
-        Password = userDTO.Password
-    };
 
-    userService.Create(user);
+    var user = userService.Create(userDTO.Email, userDTO.Password);
 
-    return Results.Created($"/users/{user.Id}", user);
+    return Results.Created($"/users/{user.Id}", new { user.Id });
 
 }).AllowAnonymous().WithTags("User");
 
