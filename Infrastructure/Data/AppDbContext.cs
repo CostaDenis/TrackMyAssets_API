@@ -30,7 +30,7 @@ namespace TrackMyAssets_API.Data
                 new Administrator
                 {
                     Email = "adm@teste.com",
-                    Password = "123456"
+                    Password = "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA=="
                 }
             );
 

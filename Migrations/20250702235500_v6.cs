@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackMyAssets_API.Migrations
 {
     /// <inheritdoc />
-    public partial class v5 : Migration
+    public partial class v6 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -108,7 +108,7 @@ namespace TrackMyAssets_API.Migrations
             migrationBuilder.InsertData(
                 table: "Administrators",
                 columns: new[] { "Id", "Email", "Password" },
-                values: new object[] { new Guid("f71bb948-d066-49c4-9336-069f76899320"), "adm@teste.com", "123456" });
+                values: new object[] { new Guid("5994a246-99ca-42e6-aac0-692d95e5617e"), "adm@teste.com", "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA==" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AssetTransactions_AssetId",

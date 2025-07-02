@@ -12,8 +12,8 @@ using TrackMyAssets_API.Data;
 namespace TrackMyAssets_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250702232442_v5")]
-    partial class v5
+    [Migration("20250702235500_v6")]
+    partial class v6
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,9 +48,9 @@ namespace TrackMyAssets_API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f71bb948-d066-49c4-9336-069f76899320"),
+                            Id = new Guid("5994a246-99ca-42e6-aac0-692d95e5617e"),
                             Email = "adm@teste.com",
-                            Password = "123456"
+                            Password = "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA=="
                         });
                 });
 
