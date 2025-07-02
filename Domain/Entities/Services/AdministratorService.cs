@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
@@ -20,10 +21,18 @@ namespace TrackMyAssets_API.Domain.Entities.Services
 
         public Administrator? Login(LoginDTO loginDTO)
         {
-            var adm = _context.Administrators.Where(x => x.Email == loginDTO.Email
-                && x.Password == loginDTO.Password).FirstOrDefault();
+            var administrator = _context.Administrators.FirstOrDefault(x => x.Email == loginDTO.Email);
 
-            return adm;
+            if (administrator == null)
+                return null;
+
+            var hasher = new PasswordHasher<Administrator>();
+            var result = hasher.VerifyHashedPassword(administrator, administrator.Password, loginDTO.Password);
+
+            if (result == PasswordVerificationResult.Success)
+                return administrator;
+
+            return null;
         }
 
         public List<User> GetAllUsers(int? page = 1)

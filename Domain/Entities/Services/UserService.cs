@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
@@ -20,16 +21,35 @@ namespace TrackMyAssets_API.Domain.Entities.Services
 
         public User? Login(LoginDTO loginDTO)
         {
-            var user = _context.Users.Where(x => x.Email == loginDTO.Email
-                && x.Password == loginDTO.Password).FirstOrDefault();
+            var user = _context.Users.FirstOrDefault(x => x.Email == loginDTO.Email);
 
-            return user;
+            if (user == null)
+                return null;
+
+            var hasher = new PasswordHasher<User>();
+            var result = hasher.VerifyHashedPassword(user, user.Password, loginDTO.Password);
+
+            if (result == PasswordVerificationResult.Success)
+                return user;
+
+            return null;
         }
 
-        public void Create(User user)
+        public User Create(string email, string password)
         {
+            var user = new User
+            {
+                Email = email,
+                Password = string.Empty
+            };
+
+            var hasher = new PasswordHasher<User>();
+            user.Password = hasher.HashPassword(user, password);
+
             _context.Users.Add(user);
             _context.SaveChanges();
+
+            return user;
         }
 
         public User GetById(Guid id)

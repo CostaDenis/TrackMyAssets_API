@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackMyAssets_API.Migrations
 {
     /// <inheritdoc />
-    public partial class v4 : Migration
+    public partial class v6 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace TrackMyAssets_API.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Password = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,7 +44,7 @@ namespace TrackMyAssets_API.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Password = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,7 +108,7 @@ namespace TrackMyAssets_API.Migrations
             migrationBuilder.InsertData(
                 table: "Administrators",
                 columns: new[] { "Id", "Email", "Password" },
-                values: new object[] { new Guid("e492aaa5-aa82-424d-8254-43227829c12e"), "adm@teste.com", "123456" });
+                values: new object[] { new Guid("5994a246-99ca-42e6-aac0-692d95e5617e"), "adm@teste.com", "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA==" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AssetTransactions_AssetId",
