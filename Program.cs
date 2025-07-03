@@ -20,7 +20,7 @@ using TrackMyAssets_API.Infrastructure;
 #region Builder
 
 var builder = WebApplication.CreateBuilder(args);
-var key = builder.Configuration.GetSection("Jwt")?.Value ?? "";
+var key = builder.Configuration["Jwt"];
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
 
