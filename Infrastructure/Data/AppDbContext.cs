@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Domain.Entities;
 
@@ -41,6 +37,10 @@ namespace TrackMyAssets_API.Data
             modelBuilder.Entity<AssetTransaction>()
                 .Property(a => a.UnitsChanged)
                 .HasPrecision(18, 6);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

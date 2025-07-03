@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.Entities.DTOs;
@@ -37,6 +33,10 @@ namespace TrackMyAssets_API.Domain.Entities.Services
 
         public User Create(string email, string password)
         {
+
+            if (_context.Users.Any(x => x.Email == email))
+                throw new InvalidOperationException("E-mail já está em uso.");
+
             var user = new User
             {
                 Email = email,
