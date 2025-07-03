@@ -21,10 +21,11 @@ using TrackMyAssets_API.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var key = builder.Configuration.GetSection("Jwt")?.Value ?? "";
-var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(ConnectionString));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddAuthentication(option =>
 {
