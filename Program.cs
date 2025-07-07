@@ -381,7 +381,7 @@ app.MapPost("/users/assets", ([FromBody] UserAssetAddDTO userAssetDTO, HttpConte
     return Results.Ok(result);
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("UserAsset");
 
-app.MapDelete("/users/assets", ([FromBody] UserAssetRemoveDTO userAssetDTO, HttpContext http, IUserAssetService userAssetService) =>
+app.MapPut("/users/assets", ([FromBody] UserAssetRemoveDTO userAssetDTO, HttpContext http, IUserAssetService userAssetService) =>
 {
     var userId = JwtUtils.GetUserId(http);
 

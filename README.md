@@ -152,7 +152,7 @@ Abaixo estão listadas as principais rotas da aplicação, agrupadas por funçã
 | Método | Rota                   | Descrição                           | Autenticação |
 |--------|------------------------|-------------------------------------|--------------|
 | POST   | `/users/assets`        | Adicionar unidades de um ativo      | ✅ (User)     |
-| DELETE | `/users/assets`        | Remover unidades de um ativo        | ✅ (User)     |
+| PUT    | `/users/assets`        | Remover unidades de um ativo        | ✅ (User)     |
 | GET    | `/users/assets`        | Listar todos os ativos do usuário   | ✅ (User)     |
 | GET    | `/users/assets/{id}`   | Detalhes de um ativo do usuário     | ✅ (User)     |
 
@@ -178,7 +178,7 @@ git clone git@github.com:CostaDenis/TrackMyAssets_API.git
 ### Configurando o ambiente
 
 No arquivo appsettings.Development.json (localizado na raiz do projeto), atualize a Connection String com as informações do seu banco de dados SQL Server.
-![ConnectionString](image-3.png)
+![ConnectionString](docs/ConnectionString.png)
 
 ### Rodando a aplicação
 
@@ -215,7 +215,7 @@ dotnet ef database update
 ### Token JWT
 
 Ao realizar o login, seja como usuário ou administrador, a aplicação retorna um token JWT:
-![Token](image-2.png) 
+![Token](docs/userToken.png)
 
 Para usar este token, vá até o início da documentação no Swagger, clique no botão Authorize e cole o valor do token no campo exibido:
 ![Authorize](docs/AuthorizeExample.png)
@@ -228,7 +228,7 @@ Para testar as funcionalidades do perfil de Administrador, siga os passos abaixo
 1. Escolha uma senha de sua preferência.
 
 2. Gere o hash dessa senha em um projeto separado. Exemplo:
-![Hash](image-1.png)
+![Hash](docs/hash.png)
 
 3. Copie o valor gerado e cole no arquivo ./Infrastructure/Data/AppDbContext.cs, no campo Password da criação do administrador:
 ![AppDbContext](docs/AppDbContext.png)
