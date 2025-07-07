@@ -21,7 +21,8 @@ using TrackMyAssets_API.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var key = builder.Configuration["Jwt"];
-var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
+                             builder.Configuration.GetConnectionString("DefaultConnection"); ;
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>

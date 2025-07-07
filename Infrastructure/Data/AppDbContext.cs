@@ -9,10 +9,8 @@ namespace TrackMyAssets_API.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) :
             base(options)
         {
-            // _configuration = configuration;
-        }
 
-        // private readonly IConfiguration _configuration;
+        }
 
         public DbSet<User> Users { get; set; } = default!;
         public DbSet<Administrator> Administrators { get; set; } = default!;
@@ -45,14 +43,7 @@ namespace TrackMyAssets_API.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // if (!optionsBuilder.IsConfigured)
-            // {
-            //     var ConnectionString = _configuration.GetConnectionString("DefaultConnection");
 
-            //     if (!string.IsNullOrEmpty(ConnectionString))
-            //         optionsBuilder.UseSqlServer(ConnectionString);
-
-            // }
         }
 
     }
