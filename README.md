@@ -151,8 +151,8 @@ Abaixo estão listadas as principais rotas da aplicação, agrupadas por funçã
 
 | Método | Rota                   | Descrição                           | Autenticação |
 |--------|------------------------|-------------------------------------|--------------|
-| POST   | `/users/assets`        | Adicionar unidades de um ativo      | ✅ (User)     |
-| PUT    | `/users/assets`        | Remover unidades de um ativo        | ✅ (User)     |
+| POST   | `/users/assets`        | Adicionar as primeiras unidades de um ativo      | ✅ (User)     |
+| PUT    | `/users/assets`        | Atualizar unidades de um ativo        | ✅ (User)     |
 | GET    | `/users/assets`        | Listar todos os ativos do usuário   | ✅ (User)     |
 | GET    | `/users/assets/{id}`   | Detalhes de um ativo do usuário     | ✅ (User)     |
 
