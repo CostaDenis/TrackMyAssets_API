@@ -287,10 +287,10 @@ app.MapPost("/assets", ([FromBody] AssetDTO assetDTO, IAssetService assetService
 
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
 
-app.MapGet("/assets", ([FromQuery] int? page, IAssetService AssetService) =>
+app.MapGet("/assets", ([FromQuery] int page, [FromQuery] int pageSize, IAssetService AssetService) =>
 {
     var assetsModelView = new List<AssetModelView>();
-    var assets = AssetService.GetAll(page);
+    var assets = AssetService.GetAll(page, pageSize);
 
     foreach (var assts in assets)
     {
@@ -306,10 +306,27 @@ app.MapGet("/assets", ([FromQuery] int? page, IAssetService AssetService) =>
 
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
 
-app.MapGet("/assets/{id}", ([FromRoute] Guid id, IAssetService assetService) =>
+app.MapGet("/assets/{id:guid}", ([FromRoute] Guid id, IAssetService assetService) =>
 {
 
     var asset = assetService.GetById(id);
+
+    if (asset == null)
+        return Results.NotFound();
+
+    return Results.Ok(new AssetModelView
+    {
+        Name = asset.Name,
+        Symbol = asset.Symbol!,
+        Type = asset.Type.ToString()
+    });
+
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
+
+app.MapGet("/assets/{name}", ([FromRoute] string name, IAssetService assetService) =>
+{
+
+    var asset = assetService.GetByName(name);
 
     if (asset == null)
         return Results.NotFound();

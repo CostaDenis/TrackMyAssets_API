@@ -144,6 +144,7 @@ Abaixo estão listadas as principais rotas da aplicação, agrupadas por funçã
 | POST   | `/assets`         | Criação de novo ativo                   | ✅ (Admin)    |
 | GET    | `/assets`         | Listagem de ativos                      | ✅ (User/Admin) |
 | GET    | `/assets/{id}`    | Detalhes de ativo específico            | ✅ (User/Admin) |
+| GET    | `/assets/{name}`    | Detalhes de ativo específico            | ✅ (User/Admin) |
 | PUT    | `/assets/{id}`    | Atualização de ativo                    | ✅ (Admin)    |
 | DELETE | `/assets/{id}`    | Exclusão de ativo                       | ✅ (Admin)    |
 

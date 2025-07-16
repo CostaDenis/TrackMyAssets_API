@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 
@@ -22,14 +23,15 @@ namespace TrackMyAssets_API.Domain.Entities.Services
         public Asset? GetById(Guid id)
             => _context.Assets.Where(x => x.Id == id).FirstOrDefault();
 
+        public Asset? GetByName(string name)
+            => _context.Assets.Where(x => x.Name == name).FirstOrDefault();
 
-        public List<Asset> GetAll(int? page = 1)
+
+
+        public List<Asset> GetAll(int page = 0, int pageSize = 10)
         {
             var query = _context.Assets.AsQueryable();
-            int pageSize = 10;
-
-            if (page != null)
-                query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
+            query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
 
             return query.ToList();
         }
@@ -44,16 +46,6 @@ namespace TrackMyAssets_API.Domain.Entities.Services
         {
             _context.Assets.Remove(asset);
             _context.SaveChanges();
-        }
-
-        public AssetTransaction AddUnits(Guid assetId, double unit, string? note = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public AssetTransaction RemoveUnis(Guid assetId, double unit, string? note = null)
-        {
-            throw new NotImplementedException();
         }
 
     }

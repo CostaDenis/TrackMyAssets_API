@@ -5,7 +5,8 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces
     {
         void Create(Asset asset);
         Asset? GetById(Guid id);
-        List<Asset> GetAll(int? page = 1);
+        Asset? GetByName(string name);
+        List<Asset> GetAll(int page = 0, int pageSize = 10);
         void Update(Asset asset);
         void Delete(Asset asset);
     }
