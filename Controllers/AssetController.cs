@@ -43,7 +43,7 @@ public class AssetController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Administrator, User")]
-    public IActionResult GetAllAssets(
+    public IActionResult GetAll(
         [FromQuery] int page,
         [FromQuery] int pageSize
     )
