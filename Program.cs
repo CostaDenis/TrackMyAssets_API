@@ -118,80 +118,80 @@ app.MapGet("/", () => Results.Json(new HomeModelView())).WithTags("Home").AllowA
 //     return new JwtSecurityTokenHandler().WriteToken(token);
 // }
 
-app.MapPost("/administrators/login", ([FromBody] LoginDTO loginDTO, IAdministratorService administratorService) =>
-{
-    var adm = administratorService.Login(loginDTO);
+// app.MapPost("/administrators/login", ([FromBody] LoginDTO loginDTO, IAdministratorService administratorService) =>
+// {
+//     var adm = administratorService.Login(loginDTO);
 
-    if (adm == null)
-    {
-        return Results.Unauthorized();
-    }
+//     if (adm == null)
+//     {
+//         return Results.Unauthorized();
+//     }
 
-    string token = GenerateTokenJwt(adm.Id, adm.Email, "Admin");
+//     string token = GenerateTokenJwt(adm.Id, adm.Email, "Admin");
 
-    return Results.Ok(new LoggedAdministratorModelView
-    {
-        Id = adm.Id,
-        Email = adm.Email,
-        Token = token
-    });
+//     return Results.Ok(new LoggedAdministratorModelView
+//     {
+//         Id = adm.Id,
+//         Email = adm.Email,
+//         Token = token
+//     });
 
-}).AllowAnonymous().WithTags("Administrator");
-
-
-app.MapGet("/administrators/users", ([FromQuery] int? page, IAdministratorService administratorService) =>
-{
-
-    var usersModelView = new List<UserModelView>();
-    var users = administratorService.GetAllUsers(page);
-
-    foreach (var usr in users)
-    {
-        usersModelView.Add(new UserModelView
-        {
-            Id = usr.Id,
-            Email = usr.Email
-        });
-    }
-
-    return Results.Ok(users);
-
-}).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Administrator");
+// }).AllowAnonymous().WithTags("Administrator");
 
 
-app.MapGet("administrators/users/{id}", ([FromRoute] Guid id, IAdministratorService administratorService) =>
-{
+// app.MapGet("/administrators/users", ([FromQuery] int? page, IAdministratorService administratorService) =>
+// {
 
-    var user = administratorService.GetUserById(id);
+//     var usersModelView = new List<UserModelView>();
+//     var users = administratorService.GetAllUsers(page);
 
-    if (user == null)
-    {
-        return Results.NotFound();
-    }
+//     foreach (var usr in users)
+//     {
+//         usersModelView.Add(new UserModelView
+//         {
+//             Id = usr.Id,
+//             Email = usr.Email
+//         });
+//     }
 
-    return Results.Ok(new UserModelView
-    {
-        Id = user.Id,
-        Email = user.Email
-    });
+//     return Results.Ok(users);
 
-}).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Administrator");
+// }).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Administrator");
 
 
-app.MapDelete("administrators/users/{id}", ([FromRoute] Guid id, IAdministratorService administratorService) =>
-{
+// app.MapGet("administrators/users/{id}", ([FromRoute] Guid id, IAdministratorService administratorService) =>
+// {
 
-    var user = administratorService.GetUserById(id);
+//     var user = administratorService.GetUserById(id);
 
-    if (user == null)
-    {
-        return Results.NotFound();
-    }
+//     if (user == null)
+//     {
+//         return Results.NotFound();
+//     }
 
-    administratorService.DeleteUser(user);
-    return Results.NoContent();
+//     return Results.Ok(new UserModelView
+//     {
+//         Id = user.Id,
+//         Email = user.Email
+//     });
 
-}).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Administrator");
+// }).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Administrator");
+
+
+// app.MapDelete("administrators/users/{id}", ([FromRoute] Guid id, IAdministratorService administratorService) =>
+// {
+
+//     var user = administratorService.GetUserById(id);
+
+//     if (user == null)
+//     {
+//         return Results.NotFound();
+//     }
+
+//     administratorService.DeleteUser(user);
+//     return Results.NoContent();
+
+// }).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Administrator");
 
 #endregion
 

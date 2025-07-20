@@ -9,6 +9,7 @@ using TrackMyAssets_API.Domain.ModelsViews;
 namespace TrackMyAssets_API.Controllers;
 
 [ApiController]
+[Authorize(Roles = "User")]
 [Route(("/users"))]
 public class UserController : ControllerBase
 {
@@ -57,7 +58,6 @@ public class UserController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize(Roles = "User")]
     public IActionResult Put(
         [FromBody] UserDTO userDTO,
         HttpContext http,
@@ -80,7 +80,6 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete]
-    [Authorize(Roles = "User")]
     public IActionResult Delete(
         HttpContext http,
         [FromServices] TokenService tokenService
