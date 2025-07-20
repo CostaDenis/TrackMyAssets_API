@@ -8,12 +8,12 @@ namespace TrackMyAssets_API.Domain.Entities.Services
     public class UserService : IUserService
     {
 
+        private readonly AppDbContext _context;
+
         public UserService(AppDbContext context)
         {
             _context = context;
         }
-
-        private readonly AppDbContext _context;
 
         public User? Login(LoginDTO loginDTO)
         {

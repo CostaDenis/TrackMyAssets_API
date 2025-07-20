@@ -93,30 +93,30 @@ app.MapGet("/", () => Results.Json(new HomeModelView())).WithTags("Home").AllowA
 
 #region Administrators
 
-string GenerateTokenJwt(Guid id, string email, string role)
-{
-    if (string.IsNullOrEmpty(key))
-    {
-        return string.Empty;
-    }
+// string GenerateTokenJwt(Guid id, string email, string role)
+// {
+//     if (string.IsNullOrEmpty(key))
+//     {
+//         return string.Empty;
+//     }
 
-    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-    var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, id.ToString()),
-        new Claim(ClaimTypes.Email, email),
-        new Claim(ClaimTypes.Role, role)
-    };
+//     var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+//     var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+//     var claims = new List<Claim>
+//     {
+//         new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+//         new Claim(ClaimTypes.Email, email),
+//         new Claim(ClaimTypes.Role, role)
+//     };
 
-    var token = new JwtSecurityToken(
-        claims: claims,
-        expires: DateTime.Now.AddDays(1),
-        signingCredentials: credentials
-    );
+//     var token = new JwtSecurityToken(
+//         claims: claims,
+//         expires: DateTime.Now.AddDays(1),
+//         signingCredentials: credentials
+//     );
 
-    return new JwtSecurityTokenHandler().WriteToken(token);
-}
+//     return new JwtSecurityTokenHandler().WriteToken(token);
+// }
 
 app.MapPost("/administrators/login", ([FromBody] LoginDTO loginDTO, IAdministratorService administratorService) =>
 {
@@ -197,71 +197,72 @@ app.MapDelete("administrators/users/{id}", ([FromRoute] Guid id, IAdministratorS
 
 
 
-#region Users
-
-app.MapPost("/users/login", ([FromBody] LoginDTO loginDTO, IUserService userService) =>
-{
-
-    var user = userService.Login(loginDTO);
-
-    if (user == null)
-    {
-        return Results.Unauthorized();
-    }
-    string token = GenerateTokenJwt(user.Id, user.Email, "User");
-
-    return Results.Ok(new LoggedUserModelView
-    {
-        Id = user.Id,
-        Email = user.Email,
-        Token = token
-    });
-
-}).AllowAnonymous().WithTags("User");
-
-app.MapPost("/users", ([FromBody] UserDTO userDTO, IUserService userService) =>
-{
-
-    var user = userService.Create(userDTO.Email, userDTO.Password);
-
-    return Results.Created($"/users/{user.Id}", new { user.Id });
-
-}).AllowAnonymous().WithTags("User");
-
-app.MapPut("/users", ([FromBody] UserDTO userDTO, HttpContext http, IUserService userService) =>
-{
-
-    var userId = JwtUtils.GetUserId(http);
-
-    if (userId == null)
-        return Results.Unauthorized();
-
-    var user = userService.GetById(userId.Value);
-
-    user.Email = userDTO.Email;
-    user.Password = userDTO.Password;
-
-    userService.Update(user);
-
-    return Results.Ok(user);
-
-}).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("User");
-
-app.MapDelete("/users", (HttpContext http, IUserService userService) =>
-{
-    var userId = JwtUtils.GetUserId(http);
-
-    if (userId == null)
-        return Results.Unauthorized();
-
-    var user = userService.GetById(userId.Value);
-    userService.DeleteOwnUser(user);
-
-    return Results.NoContent();
-}).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("User");
+// #region Users
 
 
-#endregion
+// app.MapPost("/users/login", ([FromBody] LoginDTO loginDTO, IUserService userService) =>
+// {
+
+//     var user = userService.Login(loginDTO);
+
+//     if (user == null)
+//     {
+//         return Results.Unauthorized();
+//     }
+//     string token = GenerateTokenJwt(user.Id, user.Email, "User");
+
+//     return Results.Ok(new LoggedUserModelView
+//     {
+//         Id = user.Id,
+//         Email = user.Email,
+//         Token = token
+//     });
+
+// }).AllowAnonymous().WithTags("User");
+
+// app.MapPost("/users", ([FromBody] UserDTO userDTO, IUserService userService) =>
+// {
+
+//     var user = userService.Create(userDTO.Email, userDTO.Password);
+
+//     return Results.Created($"/users/{user.Id}", new { user.Id });
+
+// }).AllowAnonymous().WithTags("User");
+
+// app.MapPut("/users", ([FromBody] UserDTO userDTO, HttpContext http, IUserService userService) =>
+// {
+
+//     var userId = JwtUtils.GetUserId(http);
+
+//     if (userId == null)
+//         return Results.Unauthorized();
+
+//     var user = userService.GetById(userId.Value);
+
+//     user.Email = userDTO.Email;
+//     user.Password = userDTO.Password;
+
+//     userService.Update(user);
+
+//     return Results.Ok(user);
+
+// }).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("User");
+
+// app.MapDelete("/users", (HttpContext http, IUserService userService) =>
+// {
+//     var userId = JwtUtils.GetUserId(http);
+
+//     if (userId == null)
+//         return Results.Unauthorized();
+
+//     var user = userService.GetById(userId.Value);
+//     userService.DeleteOwnUser(user);
+
+//     return Results.NoContent();
+// }).RequireAuthorization().RequireAuthorization(new AuthorizeAttribute { Roles = "User" }).WithTags("User");
+
+
+// #endregion
 
 
 #region Asset
