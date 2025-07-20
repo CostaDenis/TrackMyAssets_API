@@ -267,116 +267,116 @@ app.MapGet("/", () => Results.Json(new HomeModelView())).WithTags("Home").AllowA
 
 #region Asset
 
-app.MapPost("/assets", ([FromBody] AssetDTO assetDTO, IAssetService assetService) =>
-{
+// app.MapPost("/assets", ([FromBody] AssetDTO assetDTO, IAssetService assetService) =>
+// {
 
-    if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
-    {
-        return Results.BadRequest("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency");
-    }
+//     if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
+//     {
+//         return Results.BadRequest("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency");
+//     }
 
-    var asset = new Asset
-    {
-        Name = assetDTO.Name,
-        Symbol = assetDTO.Symbol,
-        Type = parsedType
-    };
+//     var asset = new Asset
+//     {
+//         Name = assetDTO.Name,
+//         Symbol = assetDTO.Symbol,
+//         Type = parsedType
+//     };
 
-    assetService.Create(asset);
+//     assetService.Create(asset);
 
-    return Results.Created($"/assets/{asset.Id}", asset);
+//     return Results.Created($"/assets/{asset.Id}", asset);
 
-}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
+// }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
 
-app.MapGet("/assets", ([FromQuery] int page, [FromQuery] int pageSize, IAssetService AssetService) =>
-{
-    var assetsModelView = new List<AssetModelView>();
-    var assets = AssetService.GetAll(page, pageSize);
+// app.MapGet("/assets", ([FromQuery] int page, [FromQuery] int pageSize, IAssetService AssetService) =>
+// {
+//     var assetsModelView = new List<AssetModelView>();
+//     var assets = AssetService.GetAll(page, pageSize);
 
-    foreach (var assts in assets)
-    {
-        assetsModelView.Add(new AssetModelView
-        {
-            Name = assts.Name,
-            Symbol = assts.Symbol!,
-            Type = assts.Type.ToString()
-        });
-    }
+//     foreach (var assts in assets)
+//     {
+//         assetsModelView.Add(new AssetModelView
+//         {
+//             Name = assts.Name,
+//             Symbol = assts.Symbol!,
+//             Type = assts.Type.ToString()
+//         });
+//     }
 
-    return Results.Ok(assets);
+//     return Results.Ok(assets);
 
-}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
+// }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
 
-app.MapGet("/assets/{id:guid}", ([FromRoute] Guid id, IAssetService assetService) =>
-{
+// app.MapGet("/assets/{id:guid}", ([FromRoute] Guid id, IAssetService assetService) =>
+// {
 
-    var asset = assetService.GetById(id);
+//     var asset = assetService.GetById(id);
 
-    if (asset == null)
-        return Results.NotFound();
+//     if (asset == null)
+//         return Results.NotFound();
 
-    return Results.Ok(new AssetModelView
-    {
-        Name = asset.Name,
-        Symbol = asset.Symbol!,
-        Type = asset.Type.ToString()
-    });
+//     return Results.Ok(new AssetModelView
+//     {
+//         Name = asset.Name,
+//         Symbol = asset.Symbol!,
+//         Type = asset.Type.ToString()
+//     });
 
-}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
+// }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
 
-app.MapGet("/assets/{name}", ([FromRoute] string name, IAssetService assetService) =>
-{
+// app.MapGet("/assets/{name}", ([FromRoute] string name, IAssetService assetService) =>
+// {
 
-    var asset = assetService.GetByName(name);
+//     var asset = assetService.GetByName(name);
 
-    if (asset == null)
-        return Results.NotFound();
+//     if (asset == null)
+//         return Results.NotFound();
 
-    return Results.Ok(new AssetModelView
-    {
-        Name = asset.Name,
-        Symbol = asset.Symbol!,
-        Type = asset.Type.ToString()
-    });
+//     return Results.Ok(new AssetModelView
+//     {
+//         Name = asset.Name,
+//         Symbol = asset.Symbol!,
+//         Type = asset.Type.ToString()
+//     });
 
-}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
+// }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin, User" }).WithTags("Asset");
 
-app.MapPut("/assets/{id}", ([FromBody] AssetDTO assetDTO, Guid id, IAssetService assetService) =>
-{
+// app.MapPut("/assets/{id}", ([FromBody] AssetDTO assetDTO, Guid id, IAssetService assetService) =>
+// {
 
-    var asset = assetService.GetById(id);
-    if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
-    {
-        return Results.BadRequest("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency");
-    }
+//     var asset = assetService.GetById(id);
+//     if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
+//     {
+//         return Results.BadRequest("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency");
+//     }
 
-    if (asset == null)
-        return Results.NotFound();
+//     if (asset == null)
+//         return Results.NotFound();
 
 
-    asset.Name = assetDTO.Name;
-    asset.Symbol = assetDTO.Symbol;
-    asset.Type = parsedType;
+//     asset.Name = assetDTO.Name;
+//     asset.Symbol = assetDTO.Symbol;
+//     asset.Type = parsedType;
 
-    assetService.Update(asset);
+//     assetService.Update(asset);
 
-    return Results.Ok(asset);
+//     return Results.Ok(asset);
 
-}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
+// }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
 
-app.MapDelete("/assets/{id}", ([FromRoute] Guid id, IAssetService assetService) =>
-{
+// app.MapDelete("/assets/{id}", ([FromRoute] Guid id, IAssetService assetService) =>
+// {
 
-    var asset = assetService.GetById(id);
+//     var asset = assetService.GetById(id);
 
-    if (asset == null)
-        return Results.NotFound();
+//     if (asset == null)
+//         return Results.NotFound();
 
-    assetService.Delete(asset);
+//     assetService.Delete(asset);
 
-    return Results.NoContent();
+//     return Results.NoContent();
 
-}).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
+// }).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }).WithTags("Asset");
 
 #endregion
 
