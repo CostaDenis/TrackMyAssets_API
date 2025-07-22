@@ -9,7 +9,7 @@ using TrackMyAssets_API.Domain.ModelsViews;
 namespace TrackMyAssets_API.Controllers;
 
 [ApiController]
-[Route("/assets")]
+[Route("assets")]
 public class AssetController : ControllerBase
 {
     private readonly IAssetService _assetService;
@@ -66,7 +66,7 @@ public class AssetController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Administrator, User")]
-    [Route("/{id:guid}")]
+    [Route("{id:guid}")]
     public IActionResult GetById(
         [FromRoute] Guid id
     )
@@ -86,7 +86,7 @@ public class AssetController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Administrator, User")]
-    [Route("/{name}")]
+    [Route("{name}")]
     public IActionResult GetByName(
         [FromRoute] string name
     )
@@ -106,7 +106,7 @@ public class AssetController : ControllerBase
 
     [HttpPut]
     [Authorize(Roles = "Administrator")]
-    [Route("/{id:guid}")]
+    [Route("{id:guid}")]
     public IActionResult Update(
         [FromBody] AssetDTO assetDTO,
         Guid id
@@ -133,7 +133,7 @@ public class AssetController : ControllerBase
 
     [HttpDelete]
     [Authorize(Roles = "Administrator")]
-    [Route("/{id:guid}")]
+    [Route("{id:guid}")]
     public IActionResult Delete(
         [FromRoute] Guid id
     )

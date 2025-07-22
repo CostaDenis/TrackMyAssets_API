@@ -9,7 +9,7 @@ namespace TrackMyAssets_API.Controllers;
 
 [ApiController]
 [Authorize(Roles = "Administrator")]
-[Route("/administrators")]
+[Route("administrators")]
 public class AdministratorController : ControllerBase
 {
     private readonly IAdministratorService _administratorService;
@@ -21,7 +21,7 @@ public class AdministratorController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    [Route("/login")]
+    [Route("login")]
     public IActionResult Login(
         [FromBody] LoginDTO loginDTO,
         [FromServices] TokenService tokenService
@@ -45,7 +45,7 @@ public class AdministratorController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/users")]
+    [Route("users")]
     public IActionResult GetAllUsers(
         [FromQuery] int? page
     )
@@ -66,7 +66,7 @@ public class AdministratorController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/users/{id:guid}")]
+    [Route("users/{id:guid}")]
     public IActionResult GetUserById(
         [FromRoute] Guid id
     )
@@ -85,7 +85,7 @@ public class AdministratorController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("/users/{id:guid}")]
+    [Route("users/{id:guid}")]
     public IActionResult DeleteUser(
         [FromRoute] Guid id
     )

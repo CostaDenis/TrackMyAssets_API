@@ -9,7 +9,7 @@ using TrackMyAssets_API.Domain.ModelsViews;
 namespace TrackMyAssets_API.Controllers;
 
 [ApiController]
-[Route("/users/assets")]
+[Route("users/assets")]
 [Authorize(Roles = "User")]
 public class UserAssetController : ControllerBase
 {
@@ -91,7 +91,7 @@ public class UserAssetController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/{id:guid}")]
+    [Route("{id:guid}")]
     public IActionResult GetById(
         [FromRoute] Guid id
     )

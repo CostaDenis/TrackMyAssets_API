@@ -10,7 +10,7 @@ namespace TrackMyAssets_API.Controllers;
 
 [ApiController]
 [Authorize(Roles = "User")]
-[Route(("/users"))]
+[Route(("users"))]
 public class UserController : ControllerBase
 {
 
@@ -24,7 +24,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    [Route("/login")]
+    [Route("login")]
     public IActionResult Login(
         [FromBody] LoginDTO login,
         [FromServices] TokenService tokenService

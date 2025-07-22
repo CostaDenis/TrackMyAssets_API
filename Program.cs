@@ -36,6 +36,8 @@ builder.Services.AddAuthentication(option =>
 });
 builder.Services.AddAuthorization();
 
+builder.Services.AddControllers();
+
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAssetService, AssetService>();
@@ -84,15 +86,15 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.MapControllers();
 
 
 app.MapGet("/", () => Results.Json(new HomeModelView())).WithTags("Home").AllowAnonymous();
 
 #endregion
-
-app.UseSwagger();
-app.UseSwaggerUI();
 
 
 app.Run();
