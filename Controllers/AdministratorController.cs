@@ -19,12 +19,33 @@ public class AdministratorController : ControllerBase
         _administratorService = administratorService;
     }
 
+    [HttpGet]
+    [Route("overview")]
+    public IActionResult Dashboard(
+        [FromServices] IUserService _userService,
+        [FromServices] IAssetService _assetService,
+        [FromServices] IUserAssetService _userAssetService
+    )
+    {
+        var totalUsers = _userService.CountUser();
+        var totalAssets = _assetService.CountAsset();
+        var totalUserAssets = _userAssetService.CountUserAsset();
+
+        return Ok(new
+        {
+            totalUsers,
+            totalAssets,
+            totalUserAssets
+        });
+    }
+
+
     [HttpPost]
     [AllowAnonymous]
     [Route("login")]
     public IActionResult Login(
         [FromBody] LoginDTO loginDTO,
-        [FromServices] TokenService tokenService
+        [FromServices] ITokenService _tokenService
     )
     {
         var adm = _administratorService.Login(loginDTO);
@@ -33,7 +54,7 @@ public class AdministratorController : ControllerBase
             return Unauthorized();
 
 
-        string token = tokenService.GenerateTokenJwt(adm.Id, adm.Email, "Admin");
+        string token = _tokenService.GenerateTokenJwt(adm.Id, adm.Email, "Administrator");
 
         return Ok(new LoggedAdministratorModelView
         {

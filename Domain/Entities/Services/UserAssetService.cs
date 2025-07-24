@@ -125,5 +125,9 @@ namespace TrackMyAssets_API.Domain.Entities.Services
 
             return true;
         }
+
+        public int CountUserAsset()
+            => _context.UserAssets.Count();
+
     }
 }

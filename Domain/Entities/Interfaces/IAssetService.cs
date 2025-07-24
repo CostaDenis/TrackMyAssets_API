@@ -9,5 +9,6 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces
         List<Asset> GetAll(int page = 0, int pageSize = 10);
         void Update(Asset asset);
         void Delete(Asset asset);
+        int CountAsset();
     }
 }

@@ -8,5 +8,6 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces
         List<UserAsset> UserAssets(Guid userId);
         UserAsset? GetUserAssetByAssetId(Guid userId, Guid assetId);
         bool CheckData(Guid assetId, Guid userId);
+        int CountUserAsset();
     }
 }

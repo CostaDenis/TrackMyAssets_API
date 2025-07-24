@@ -92,8 +92,6 @@ app.UseSwaggerUI();
 app.MapControllers();
 
 
-app.MapGet("/", () => Results.Json(new HomeModelView())).WithTags("Home").AllowAnonymous();
-
 #endregion
 
 

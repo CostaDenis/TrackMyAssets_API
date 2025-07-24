@@ -9,5 +9,6 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces
         User GetById(Guid id);
         void Update(User user);
         void DeleteOwnUser(User user);
+        int CountUser();
     }
 }

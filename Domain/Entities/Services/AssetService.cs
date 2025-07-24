@@ -48,5 +48,8 @@ namespace TrackMyAssets_API.Domain.Entities.Services
             _context.SaveChanges();
         }
 
+        public int CountAsset()
+            => _context.Assets.Count();
+
     }
 }
