@@ -61,6 +61,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut]
+    [Route("change-email")]
     public IActionResult UpdateEmail(
         [FromBody] UpdateEmailDTO updateEmailDTO,
         [FromServices] ITokenService _tokenService
@@ -72,12 +73,13 @@ public class UserController : ControllerBase
             return Unauthorized();
 
         var user = _userService.GetById(userId.Value);
-        var result = _userService.UpdateEmail(user, updateEmailDTO);
+        var result = _userService.UpdateEmail(user!, updateEmailDTO);
 
         if (!result.Success)
             return BadRequest(result);
 
         return Ok(result);
+
     }
 
     [HttpPut]
@@ -93,7 +95,7 @@ public class UserController : ControllerBase
             return Unauthorized();
 
         var user = _userService.GetById(userId.Value);
-        var result = _userService.UpdatePassword(user, updatePasswordDTO);
+        var result = _userService.UpdatePassword(user!, updatePasswordDTO);
 
         if (!result.Success)
             return BadRequest(result);
@@ -113,7 +115,7 @@ public class UserController : ControllerBase
             return Unauthorized();
 
         var user = _userService.GetById(userId.Value);
-        _userService.DeleteOwnUser(user);
+        _userService.DeleteOwnUser(user!);
 
         return NoContent();
     }

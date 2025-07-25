@@ -52,10 +52,8 @@ public class UserService : IUserService
         return user;
     }
 
-    public User GetById(Guid id)
-    {
-        return _context.Users.Where(x => x.Id == id).FirstOrDefault()!;
-    }
+    public User? GetById(Guid id)
+        => _context.Users.Where(x => x.Id == id).FirstOrDefault();
 
     public void Update(User user)
     {
@@ -79,7 +77,7 @@ public class UserService : IUserService
             var hasher = new PasswordHasher<User>();
             user.Password = hasher.HashPassword(user, updatePasswordDTO.NewPassword);
             Update(user);
-            return new ResultViewModel<string>("Senha atualizada com sucesso!");
+            return new ResultViewModel<string>(data: "Senha atualizada com sucesso!");
         }
         catch
         {
@@ -97,7 +95,7 @@ public class UserService : IUserService
         try
         {
             Update(user);
-            return new ResultViewModel<string>("Email atualizado com sucesso!");
+            return new ResultViewModel<string>(data: "Email atualizado com sucesso!");
         }
         catch (DbUpdateException)
         {

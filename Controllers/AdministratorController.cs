@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
@@ -103,6 +104,50 @@ public class AdministratorController : ControllerBase
             Id = user.Id,
             Email = user.Email
         });
+    }
+
+    [HttpPut]
+    [Route("change-email")]
+    public IActionResult UpdateEmail(
+        [FromBody] UpdateEmailDTO updateEmailDTO,
+        [FromServices] ITokenService _tokenService
+    )
+    {
+        var administratorId = _tokenService.GetUserId(HttpContext);
+
+        if (administratorId == null)
+            return Unauthorized();
+
+        var administrator = _administratorService.GetAdministrator(administratorId.Value);
+        var result = _administratorService.UpdateEmail(administrator!, updateEmailDTO);
+
+        if (!result.Success)
+            return BadRequest(result);
+
+        return Ok(result);
+
+    }
+
+    [HttpPut]
+    [Route("change-password")]
+    public IActionResult UpdatePassword(
+   [FromBody] UpdatePasswordDTO updatePasswordDTO,
+   [FromServices] ITokenService _tokenService
+)
+    {
+        var userId = _tokenService.GetUserId(HttpContext);
+
+        if (userId == null)
+            return Unauthorized();
+
+        var administrator = _administratorService.GetAdministrator(userId.Value);
+        var result = _administratorService.UpdatePassword(administrator!, updatePasswordDTO);
+
+        if (!result.Success)
+            return BadRequest(result);
+
+        return Ok(result);
+
     }
 
     [HttpDelete]

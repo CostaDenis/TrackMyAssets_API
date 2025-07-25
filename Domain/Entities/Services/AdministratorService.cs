@@ -1,5 +1,8 @@
+using Blog.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Data;
+using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 
@@ -52,9 +55,76 @@ public class AdministratorService : IAdministratorService
         return user;
     }
 
+    public Administrator? GetAdministrator(Guid id)
+    => _context.Administrators.Where(x => x.Id == id).FirstOrDefault();
+
+    public void Update(Administrator administrator)
+    {
+        _context.Administrators.Update(administrator);
+        _context.SaveChanges();
+    }
+
+    public ResultViewModel<string> UpdatePassword(Administrator administrator, UpdatePasswordDTO updatePasswordDTO)
+    {
+        if (!VerifyPassword(administrator, administrator.Password, updatePasswordDTO.CurrentPassword))
+            return new ResultViewModel<string>("Verificação falha da senha atual!");
+
+        if (updatePasswordDTO.NewPassword != updatePasswordDTO.NewPasswordConfirmation)
+            return new ResultViewModel<string>("Confirmação falha da nova senha!");
+
+        if (VerifyPassword(administrator, administrator.Password, updatePasswordDTO.NewPassword))
+            return new ResultViewModel<string>("A nova senha não pode ser igual à anterior.");
+
+        try
+        {
+            var hasher = new PasswordHasher<Administrator>();
+            administrator.Password = hasher.HashPassword(administrator, updatePasswordDTO.NewPassword);
+            Update(administrator);
+            return new ResultViewModel<string>(data: "Senha atualizada com sucesso!");
+        }
+        catch
+        {
+            return new ResultViewModel<string>("Falha interna no servidor!");
+        }
+    }
+
+    public ResultViewModel<string> UpdateEmail(Administrator administrator, UpdateEmailDTO updateEmailDTO)
+    {
+        if (administrator.Email == updateEmailDTO.NewEmail)
+            return new ResultViewModel<string>("O novo email não pode ser igual à anterior.");
+
+        administrator.Email = updateEmailDTO.NewEmail;
+
+        try
+        {
+            Update(administrator);
+            return new ResultViewModel<string>(data: "Email atualizado com sucesso!");
+        }
+        catch (DbUpdateException)
+        {
+            return new ResultViewModel<string>("Email já em uso");
+        }
+        catch
+        {
+            return new ResultViewModel<string>("Falha interna no servidor!");
+        }
+    }
+
     public void DeleteUser(User user)
     {
         _context.Users.Remove(user);
         _context.SaveChanges();
     }
+
+    public bool VerifyPassword(Administrator administrator, string hashedPassword, string providerPassword)
+    {
+        var hasher = new PasswordHasher<Administrator>();
+        var result = hasher.VerifyHashedPassword(administrator, hashedPassword, providerPassword);
+
+        if (result == PasswordVerificationResult.Failed)
+            return false;
+
+        return true;
+    }
+
 }
