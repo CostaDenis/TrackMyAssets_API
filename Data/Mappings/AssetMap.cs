@@ -31,6 +31,7 @@ public class AssetMap : IEntityTypeConfiguration<Asset>
         builder.HasMany(x => x.UserAssets)
         .WithOne(x => x.Asset)
         .HasForeignKey(x => x.AssetId)
+        .HasConstraintName("FK_Assets_AssetId")
         .OnDelete(DeleteBehavior.Cascade);
 
     }

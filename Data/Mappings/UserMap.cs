@@ -27,6 +27,7 @@ public class UserMap : IEntityTypeConfiguration<User>
         builder.HasMany(x => x.UserAssets)
         .WithOne(x => x.User)
         .HasForeignKey(x => x.UserId)
+        .HasConstraintName("FK_Users_UserId")
         .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(x => x.Email, "IX_User_Email")

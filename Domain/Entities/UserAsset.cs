@@ -5,24 +5,24 @@ namespace TrackMyAssets_API.Domain.Entities;
 
 public class UserAsset
 {
-    [Key]
+    // [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required]
+    // [Required]
     public Guid UserId { get; set; }
 
-    [Required]
+    // [Required]
     [JsonIgnore]
     public User? User { get; set; }
 
-    [Required]
+    // [Required]
     public Guid AssetId { get; set; }
 
-    [Required]
+    // [Required]
     [JsonIgnore]
     public Asset? Asset { get; set; }
 
-    [Required]
-    [Range(0, (double)decimal.MaxValue)]
+    // [Required]
+    // [Range(0, (double)decimal.MaxValue)]
     public decimal Units { get; set; }
 }
