@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using TrackMyAssets_API.Data;
+using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 
@@ -22,13 +23,21 @@ namespace TrackMyAssets_API.Domain.Entities.Services
             if (user == null)
                 return null;
 
-            var hasher = new PasswordHasher<User>();
-            var result = hasher.VerifyHashedPassword(user, user.Password, loginDTO.Password);
-
-            if (result == PasswordVerificationResult.Success)
+            if (VerifyPassword(user, user.Password, loginDTO.Password))
                 return user;
 
             return null;
+        }
+
+        public bool VerifyPassword(User user, string hashedPassword, string providerPassword)
+        {
+            var hasher = new PasswordHasher<User>();
+            var result = hasher.VerifyHashedPassword(user, hashedPassword, providerPassword);
+
+            if (result == PasswordVerificationResult.Failed)
+                return false;
+
+            return true;
         }
 
         public User Create(string email, string password)

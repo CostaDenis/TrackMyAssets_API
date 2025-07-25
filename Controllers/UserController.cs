@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TrackMyAssets_API.Domain.DTOs;
+using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
@@ -27,7 +29,7 @@ public class UserController : ControllerBase
     [Route("login")]
     public IActionResult Login(
         [FromBody] LoginDTO login,
-        [FromServices] TokenService tokenService
+        [FromServices] ITokenService _tokenService
     )
     {
         var user = _userService.Login(login);
@@ -36,7 +38,7 @@ public class UserController : ControllerBase
             return Unauthorized();
 
 
-        string token = tokenService.GenerateTokenJwt(user.Id, user.Email, "User");
+        string token = _tokenService.GenerateTokenJwt(user.Id, user.Email, "User");
 
         return Ok(new LoggedUserModelView
         {
@@ -60,11 +62,10 @@ public class UserController : ControllerBase
     [HttpPut]
     public IActionResult Put(
         [FromBody] UserDTO userDTO,
-        HttpContext http,
-        [FromServices] TokenService tokenService
+        [FromServices] ITokenService _tokenService
     )
     {
-        var userId = tokenService.GetUserId(http);
+        var userId = _tokenService.GetUserId(HttpContext);
 
         if (userId == null)
             return Unauthorized();
@@ -81,11 +82,10 @@ public class UserController : ControllerBase
 
     [HttpDelete]
     public IActionResult Delete(
-        HttpContext http,
-        [FromServices] TokenService tokenService
+        [FromServices] ITokenService _tokenService
     )
     {
-        var userId = tokenService.GetUserId(http);
+        var userId = _tokenService.GetUserId(HttpContext);
 
         if (userId == null)
             return Unauthorized();
@@ -94,5 +94,43 @@ public class UserController : ControllerBase
         _userService.DeleteOwnUser(user);
 
         return NoContent();
+    }
+
+    [HttpPut]
+    [Route("change-password")]
+    public IActionResult UpdatePassword(
+        [FromBody] UpdatePasswordDTO updatePasswordDTO,
+        [FromServices] ITokenService _tokenService
+    )
+    {
+        var userId = _tokenService.GetUserId(HttpContext);
+
+        if (userId == null)
+            return Unauthorized();
+
+        var user = _userService.GetById(userId.Value);
+
+        if (!_userService.VerifyPassword(user, user.Password, updatePasswordDTO.CurrentPassword))
+            return BadRequest("Verificação falha da senha atual!");
+
+        if (updatePasswordDTO.NewPassword != updatePasswordDTO.NewPasswordConfirmation)
+            return BadRequest("Confirmação falha da nova senha!");
+
+        if (_userService.VerifyPassword(user, user.Password, updatePasswordDTO.NewPassword))
+            return BadRequest("A nova senha não pode ser igual a antiga senha!");
+
+        var hasher = new PasswordHasher<User>();
+        user.Password = hasher.HashPassword(user, updatePasswordDTO.NewPassword);
+
+        try
+        {
+            _userService.Update(user);
+            return Ok("Senha atualizada com sucesso!");
+        }
+        catch
+        {
+            return StatusCode(500, "Falha interna no servidor!");
+        }
+
     }
 }
