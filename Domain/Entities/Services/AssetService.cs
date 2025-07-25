@@ -1,55 +1,53 @@
-using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 
-namespace TrackMyAssets_API.Domain.Entities.Services
+namespace TrackMyAssets_API.Domain.Entities.Services;
+
+public class AssetService : IAssetService
 {
-    public class AssetService : IAssetService
+
+    public AssetService(AppDbContext context)
     {
-
-        public AssetService(AppDbContext context)
-        {
-            _context = context;
-        }
-
-        private readonly AppDbContext _context;
-
-        public void Create(Asset asset)
-        {
-            _context.Assets.Add(asset);
-            _context.SaveChanges();
-        }
-
-        public Asset? GetById(Guid id)
-            => _context.Assets.Where(x => x.Id == id).FirstOrDefault();
-
-        public Asset? GetByName(string name)
-            => _context.Assets.Where(x => x.Name == name).FirstOrDefault();
-
-
-
-        public List<Asset> GetAll(int page = 0, int pageSize = 10)
-        {
-            var query = _context.Assets.AsQueryable();
-            query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
-
-            return query.ToList();
-        }
-
-        public void Update(Asset asset)
-        {
-            _context.Assets.Update(asset);
-            _context.SaveChanges();
-        }
-
-        public void Delete(Asset asset)
-        {
-            _context.Assets.Remove(asset);
-            _context.SaveChanges();
-        }
-
-        public int CountAsset()
-            => _context.Assets.Count();
-
+        _context = context;
     }
+
+    private readonly AppDbContext _context;
+
+    public void Create(Asset asset)
+    {
+        _context.Assets.Add(asset);
+        _context.SaveChanges();
+    }
+
+    public Asset? GetById(Guid id)
+        => _context.Assets.Where(x => x.Id == id).FirstOrDefault();
+
+    public Asset? GetByName(string name)
+        => _context.Assets.Where(x => x.Name == name).FirstOrDefault();
+
+
+
+    public List<Asset> GetAll(int page = 0, int pageSize = 10)
+    {
+        var query = _context.Assets.AsQueryable();
+        query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
+
+        return query.ToList();
+    }
+
+    public void Update(Asset asset)
+    {
+        _context.Assets.Update(asset);
+        _context.SaveChanges();
+    }
+
+    public void Delete(Asset asset)
+    {
+        _context.Assets.Remove(asset);
+        _context.SaveChanges();
+    }
+
+    public int CountAsset()
+        => _context.Assets.Count();
+
 }

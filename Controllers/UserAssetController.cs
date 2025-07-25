@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
-using TrackMyAssets_API.Domain.ModelsViews;
+using TrackMyAssets_API.Domain.ViewModels;
 
 namespace TrackMyAssets_API.Controllers;
 
@@ -72,14 +72,14 @@ public class UserAssetController : ControllerBase
             return Unauthorized();
 
         var userAssets = _userAssetService.UserAssets(userId.Value);
-        var userAssetsModelView = new List<UserAssetModelView>();
+        var userAssetsViewModel = new List<UserAssetViewModel>();
 
         if (userAssets == null)
             return NotFound();
 
         foreach (var usr in userAssets)
         {
-            userAssetsModelView.Add(new UserAssetModelView
+            userAssetsViewModel.Add(new UserAssetViewModel
             {
                 UserId = usr.UserId,
                 AssetId = usr.AssetId,
@@ -106,7 +106,7 @@ public class UserAssetController : ControllerBase
         if (userAsset == null)
             return NotFound();
 
-        return Ok(new UserAssetModelView
+        return Ok(new UserAssetViewModel
         {
             UserId = userAsset.UserId,
             AssetId = userAsset.AssetId,

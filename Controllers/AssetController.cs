@@ -4,7 +4,7 @@ using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Enums;
-using TrackMyAssets_API.Domain.ModelsViews;
+using TrackMyAssets_API.Domain.ViewModels;
 
 namespace TrackMyAssets_API.Controllers;
 
@@ -48,12 +48,12 @@ public class AssetController : ControllerBase
         [FromQuery] int pageSize
     )
     {
-        var assetsModelView = new List<AssetModelView>();
+        var assetsViewModel = new List<AssetViewModel>();
         var assets = _assetService.GetAll(page, pageSize);
 
         foreach (var assts in assets)
         {
-            assetsModelView.Add(new AssetModelView
+            assetsViewModel.Add(new AssetViewModel
             {
                 Name = assts.Name,
                 Symbol = assts.Symbol!,
@@ -76,7 +76,7 @@ public class AssetController : ControllerBase
         if (asset == null)
             return NotFound();
 
-        return Ok(new AssetModelView
+        return Ok(new AssetViewModel
         {
             Name = asset.Name,
             Symbol = asset.Symbol!,
@@ -96,7 +96,7 @@ public class AssetController : ControllerBase
         if (asset == null)
             return NotFound();
 
-        return Ok(new AssetModelView
+        return Ok(new AssetViewModel
         {
             Name = asset.Name,
             Symbol = asset.Symbol!,

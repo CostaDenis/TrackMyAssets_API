@@ -1,134 +1,132 @@
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 
-namespace TrackMyAssets_API.Domain.Entities.Services
+namespace TrackMyAssets_API.Domain.Entities.Services;
+
+public class UserService : IUserService
 {
-    public class UserService : IUserService
+
+    private readonly AppDbContext _context;
+
+    public UserService(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public User? Login(LoginDTO loginDTO)
+    {
+        var user = _context.Users.FirstOrDefault(x => x.Email == loginDTO.Email);
+
+        if (user == null)
+            return null;
+
+        if (VerifyPassword(user, user.Password, loginDTO.Password))
+            return user;
+
+        return null;
+    }
+
+    public User Create(string email, string password)
     {
 
-        private readonly AppDbContext _context;
+        if (_context.Users.Any(x => x.Email == email))
+            throw new InvalidOperationException("E-mail já está em uso.");
 
-        public UserService(AppDbContext context)
+        var user = new User
         {
-            _context = context;
-        }
+            Email = email,
+            Password = string.Empty
+        };
 
-        public User? Login(LoginDTO loginDTO)
-        {
-            var user = _context.Users.FirstOrDefault(x => x.Email == loginDTO.Email);
+        var hasher = new PasswordHasher<User>();
+        user.Password = hasher.HashPassword(user, password);
 
-            if (user == null)
-                return null;
+        _context.Users.Add(user);
+        _context.SaveChanges();
 
-            if (VerifyPassword(user, user.Password, loginDTO.Password))
-                return user;
-
-            return null;
-        }
-
-        public User Create(string email, string password)
-        {
-
-            if (_context.Users.Any(x => x.Email == email))
-                throw new InvalidOperationException("E-mail já está em uso.");
-
-            var user = new User
-            {
-                Email = email,
-                Password = string.Empty
-            };
-
-            var hasher = new PasswordHasher<User>();
-            user.Password = hasher.HashPassword(user, password);
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-
-            return user;
-        }
-
-        public User GetById(Guid id)
-        {
-            return _context.Users.Where(x => x.Id == id).FirstOrDefault()!;
-        }
-
-        public void Update(User user)
-        {
-            _context.Users.Update(user);
-            _context.SaveChanges();
-        }
-
-        public ResultViewModel<string> UpdatePassword(User user, UpdatePasswordDTO updatePasswordDTO)
-        {
-            if (!VerifyPassword(user, user.Password, updatePasswordDTO.CurrentPassword))
-                return new ResultViewModel<string>("Verificação falha da senha atual!");
-
-            if (updatePasswordDTO.NewPassword != updatePasswordDTO.NewPasswordConfirmation)
-                return new ResultViewModel<string>("Confirmação falha da nova senha!");
-
-            if (VerifyPassword(user, user.Password, updatePasswordDTO.NewPassword))
-                return new ResultViewModel<string>("A nova senha não pode ser igual à anterior.");
-
-            try
-            {
-                var hasher = new PasswordHasher<User>();
-                user.Password = hasher.HashPassword(user, updatePasswordDTO.NewPassword);
-                Update(user);
-                return new ResultViewModel<string>("Senha atualizada com sucesso!");
-            }
-            catch
-            {
-                return new ResultViewModel<string>("Falha interna no servidor!");
-            }
-        }
-
-        public ResultViewModel<string> UpdateEmail(User user, UpdateEmailDTO updateEmailDTO)
-        {
-            if (user.Email == updateEmailDTO.NewEmail)
-                return new ResultViewModel<string>("O novo email não pode ser igual à anterior.");
-
-            user.Email = updateEmailDTO.NewEmail;
-
-            try
-            {
-                Update(user);
-                return new ResultViewModel<string>("Email atualizado com sucesso!");
-            }
-            catch (DbUpdateException)
-            {
-                return new ResultViewModel<string>("Email já em uso");
-            }
-            catch
-            {
-                return new ResultViewModel<string>("Falha interna no servidor!");
-            }
-        }
-
-        public void DeleteOwnUser(User user)
-        {
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-        }
-
-        public bool VerifyPassword(User user, string hashedPassword, string providerPassword)
-        {
-            var hasher = new PasswordHasher<User>();
-            var result = hasher.VerifyHashedPassword(user, hashedPassword, providerPassword);
-
-            if (result == PasswordVerificationResult.Failed)
-                return false;
-
-            return true;
-        }
-
-        public int CountUser()
-            => _context.Users.Count();
-
+        return user;
     }
+
+    public User GetById(Guid id)
+    {
+        return _context.Users.Where(x => x.Id == id).FirstOrDefault()!;
+    }
+
+    public void Update(User user)
+    {
+        _context.Users.Update(user);
+        _context.SaveChanges();
+    }
+
+    public ResultViewModel<string> UpdatePassword(User user, UpdatePasswordDTO updatePasswordDTO)
+    {
+        if (!VerifyPassword(user, user.Password, updatePasswordDTO.CurrentPassword))
+            return new ResultViewModel<string>("Verificação falha da senha atual!");
+
+        if (updatePasswordDTO.NewPassword != updatePasswordDTO.NewPasswordConfirmation)
+            return new ResultViewModel<string>("Confirmação falha da nova senha!");
+
+        if (VerifyPassword(user, user.Password, updatePasswordDTO.NewPassword))
+            return new ResultViewModel<string>("A nova senha não pode ser igual à anterior.");
+
+        try
+        {
+            var hasher = new PasswordHasher<User>();
+            user.Password = hasher.HashPassword(user, updatePasswordDTO.NewPassword);
+            Update(user);
+            return new ResultViewModel<string>("Senha atualizada com sucesso!");
+        }
+        catch
+        {
+            return new ResultViewModel<string>("Falha interna no servidor!");
+        }
+    }
+
+    public ResultViewModel<string> UpdateEmail(User user, UpdateEmailDTO updateEmailDTO)
+    {
+        if (user.Email == updateEmailDTO.NewEmail)
+            return new ResultViewModel<string>("O novo email não pode ser igual à anterior.");
+
+        user.Email = updateEmailDTO.NewEmail;
+
+        try
+        {
+            Update(user);
+            return new ResultViewModel<string>("Email atualizado com sucesso!");
+        }
+        catch (DbUpdateException)
+        {
+            return new ResultViewModel<string>("Email já em uso");
+        }
+        catch
+        {
+            return new ResultViewModel<string>("Falha interna no servidor!");
+        }
+    }
+
+    public void DeleteOwnUser(User user)
+    {
+        _context.Users.Remove(user);
+        _context.SaveChanges();
+    }
+
+    public bool VerifyPassword(User user, string hashedPassword, string providerPassword)
+    {
+        var hasher = new PasswordHasher<User>();
+        var result = hasher.VerifyHashedPassword(user, hashedPassword, providerPassword);
+
+        if (result == PasswordVerificationResult.Failed)
+            return false;
+
+        return true;
+    }
+
+    public int CountUser()
+        => _context.Users.Count();
+
 }

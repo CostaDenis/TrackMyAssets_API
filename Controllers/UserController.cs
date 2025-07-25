@@ -7,7 +7,7 @@ using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
-using TrackMyAssets_API.Domain.ModelsViews;
+using TrackMyAssets_API.Domain.ViewModels;
 
 namespace TrackMyAssets_API.Controllers;
 
@@ -41,7 +41,7 @@ public class UserController : ControllerBase
 
         string token = _tokenService.GenerateTokenJwt(user.Id, user.Email, "User");
 
-        return Ok(new LoggedUserModelView
+        return Ok(new LoggedUserViewModel
         {
             Id = user.Id,
             Email = user.Email,
@@ -72,27 +72,34 @@ public class UserController : ControllerBase
             return Unauthorized();
 
         var user = _userService.GetById(userId.Value);
+        var result = _userService.UpdateEmail(user, updateEmailDTO);
 
-        if (user.Email == updateEmailDTO.NewEmail)
-            return BadRequest("O email deve ser diferente");
+        if (!result.Success)
+            return BadRequest(result);
 
+        return Ok(result);
+    }
 
-        user.Email = updateEmailDTO.NewEmail;
+    [HttpPut]
+    [Route("change-password")]
+    public IActionResult UpdatePassword(
+    [FromBody] UpdatePasswordDTO updatePasswordDTO,
+    [FromServices] ITokenService _tokenService
+)
+    {
+        var userId = _tokenService.GetUserId(HttpContext);
 
-        try
-        {
-            _userService.Update(user);
-        }
-        catch (DbUpdateException)
-        {
-            return StatusCode(500, "Email já em uso!");
-        }
-        catch
-        {
-            return StatusCode(500, "Falha interna no servidor!");
-        }
+        if (userId == null)
+            return Unauthorized();
 
-        return Ok(user);
+        var user = _userService.GetById(userId.Value);
+        var result = _userService.UpdatePassword(user, updatePasswordDTO);
+
+        if (!result.Success)
+            return BadRequest(result);
+
+        return Ok(result);
+
     }
 
     [HttpDelete]
@@ -111,25 +118,4 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut]
-    [Route("change-password")]
-    public IActionResult UpdatePassword(
-        [FromBody] UpdatePasswordDTO updatePasswordDTO,
-        [FromServices] ITokenService _tokenService
-    )
-    {
-        var userId = _tokenService.GetUserId(HttpContext);
-
-        if (userId == null)
-            return Unauthorized();
-
-        var user = _userService.GetById(userId.Value);
-        var result = _userService.UpdatePassword(user, updatePasswordDTO);
-
-        if (!result.Success)
-            return BadRequest(result);
-
-        return Ok(result);
-
-    }
 }

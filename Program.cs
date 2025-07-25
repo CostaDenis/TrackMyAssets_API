@@ -6,8 +6,6 @@ using Microsoft.OpenApi.Models;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
-using TrackMyAssets_API.Domain.Enums;
-using TrackMyAssets_API.Domain.ModelsViews;
 
 #region Builder
 
@@ -29,7 +27,7 @@ builder.Services.AddAuthentication(option =>
     option.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateLifetime = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!)),
         ValidateIssuer = false,
         ValidateAudience = false
     };

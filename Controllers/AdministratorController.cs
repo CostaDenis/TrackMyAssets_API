@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
-using TrackMyAssets_API.Domain.ModelsViews;
+using TrackMyAssets_API.Domain.ViewModels;
 
 namespace TrackMyAssets_API.Controllers;
 
@@ -56,7 +56,7 @@ public class AdministratorController : ControllerBase
 
         string token = _tokenService.GenerateTokenJwt(adm.Id, adm.Email, "Administrator");
 
-        return Ok(new LoggedAdministratorModelView
+        return Ok(new LoggedAdministratorViewModel
         {
             Id = adm.Id,
             Email = adm.Email,
@@ -71,12 +71,12 @@ public class AdministratorController : ControllerBase
         [FromQuery] int? page
     )
     {
-        var usersModelView = new List<UserModelView>();
+        var usersViewModel = new List<UserViewModel>();
         var users = _administratorService.GetAllUsers(page);
 
         foreach (var usr in users)
         {
-            usersModelView.Add(new UserModelView
+            usersViewModel.Add(new UserViewModel
             {
                 Id = usr.Id,
                 Email = usr.Email
@@ -98,7 +98,7 @@ public class AdministratorController : ControllerBase
             return NotFound();
 
 
-        return Ok(new UserModelView
+        return Ok(new UserViewModel
         {
             Id = user.Id,
             Email = user.Email
