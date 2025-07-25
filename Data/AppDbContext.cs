@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TrackMyAssets_API.Data.Mappings;
 using TrackMyAssets_API.Domain.Entities;
 
 namespace TrackMyAssets_API.Data;
@@ -28,22 +29,11 @@ public class AppDbContext : DbContext
             }
         );
 
-        modelBuilder.Entity<UserAsset>()
-            .Property(u => u.Units)
-            .HasPrecision(18, 6);
-
-        modelBuilder.Entity<AssetTransaction>()
-            .Property(a => a.UnitsChanged)
-            .HasPrecision(18, 6);
-
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.Email)
-            .IsUnique();
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-
+        modelBuilder.ApplyConfiguration(new AdministratorMap());
+        modelBuilder.ApplyConfiguration(new AssetMap());
+        modelBuilder.ApplyConfiguration(new AssetTransactionMap());
+        modelBuilder.ApplyConfiguration(new UserAssetMap());
+        modelBuilder.ApplyConfiguration(new UserMap());
     }
 
 }
