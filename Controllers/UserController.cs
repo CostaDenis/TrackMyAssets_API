@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.DTOs;
@@ -60,8 +61,8 @@ public class UserController : ControllerBase
     }
 
     [HttpPut]
-    public IActionResult Put(
-        [FromBody] UserDTO userDTO,
+    public IActionResult UpdateEmail(
+        [FromBody] UpdateEmailDTO updateEmailDTO,
         [FromServices] ITokenService _tokenService
     )
     {
@@ -72,10 +73,24 @@ public class UserController : ControllerBase
 
         var user = _userService.GetById(userId.Value);
 
-        user.Email = userDTO.Email;
-        user.Password = userDTO.Password;
+        if (user.Email == updateEmailDTO.NewEmail)
+            return BadRequest("O email deve ser diferente");
 
-        _userService.Update(user);
+
+        user.Email = updateEmailDTO.NewEmail;
+
+        try
+        {
+            _userService.Update(user);
+        }
+        catch (DbUpdateException)
+        {
+            return StatusCode(500, "Email já em uso!");
+        }
+        catch
+        {
+            return StatusCode(500, "Falha interna no servidor!");
+        }
 
         return Ok(user);
     }
@@ -109,28 +124,12 @@ public class UserController : ControllerBase
             return Unauthorized();
 
         var user = _userService.GetById(userId.Value);
+        var result = _userService.UpdatePassword(user, updatePasswordDTO);
 
-        if (!_userService.VerifyPassword(user, user.Password, updatePasswordDTO.CurrentPassword))
-            return BadRequest("Verificação falha da senha atual!");
+        if (!result.Success)
+            return BadRequest(result);
 
-        if (updatePasswordDTO.NewPassword != updatePasswordDTO.NewPasswordConfirmation)
-            return BadRequest("Confirmação falha da nova senha!");
-
-        if (_userService.VerifyPassword(user, user.Password, updatePasswordDTO.NewPassword))
-            return BadRequest("A nova senha não pode ser igual a antiga senha!");
-
-        var hasher = new PasswordHasher<User>();
-        user.Password = hasher.HashPassword(user, updatePasswordDTO.NewPassword);
-
-        try
-        {
-            _userService.Update(user);
-            return Ok("Senha atualizada com sucesso!");
-        }
-        catch
-        {
-            return StatusCode(500, "Falha interna no servidor!");
-        }
+        return Ok(result);
 
     }
 }
