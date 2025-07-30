@@ -1,5 +1,7 @@
+using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TrackMyAssets_API.Domain.ViewModels;
 
 namespace TrackMyAssets_API.Controllers;
 
@@ -12,10 +14,12 @@ public class HealthController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(new
+        var data = new HealthViewModel
         {
-            status = "Ok",
-            time = DateTime.UtcNow
-        });
+            Status = "Ok",
+            Time = DateTime.UtcNow
+        };
+
+        return Ok(new ResultViewModel<HealthViewModel>(data));
     }
 }

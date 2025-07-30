@@ -1,3 +1,4 @@
+using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TrackMyAssets_API.Domain.DTOs;
@@ -32,12 +33,14 @@ public class AdministratorController : ControllerBase
         var totalAssets = _assetService.CountAsset();
         var totalUserAssets = _userAssetService.CountUserAsset();
 
-        return Ok(new
+        var data = new DashBoardViewModel
         {
-            totalUsers,
-            totalAssets,
-            totalUserAssets
-        });
+            TotalUsers = totalUsers,
+            TotalAssets = totalAssets,
+            TotalUserAssets = totalUserAssets
+        };
+
+        return Ok(new ResultViewModel<DashBoardViewModel>(data));
     }
 
 
@@ -52,17 +55,19 @@ public class AdministratorController : ControllerBase
         var adm = _administratorService.Login(loginDTO);
 
         if (adm == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedAdministratorViewModel>("Acesso negado!"));
 
 
         string token = _tokenService.GenerateTokenJwt(adm.Id, adm.Email, "Administrator");
 
-        return Ok(new LoggedAdministratorViewModel
+        var data = new LoggedAdministratorViewModel
         {
             Id = adm.Id,
             Email = adm.Email,
             Token = token
-        });
+        };
+
+        return Ok(new ResultViewModel<LoggedAdministratorViewModel>(data));
 
     }
 
@@ -84,7 +89,7 @@ public class AdministratorController : ControllerBase
             });
         }
 
-        return Ok(users);
+        return Ok(new ResultViewModel<List<UserViewModel>>(usersViewModel));
     }
 
     [HttpGet]
@@ -96,14 +101,15 @@ public class AdministratorController : ControllerBase
         var user = _administratorService.GetUserById(id);
 
         if (user == null)
-            return NotFound();
+            return NotFound(new ResultViewModel<UserViewModel>("Usuário não encontrado!"));
 
-
-        return Ok(new UserViewModel
+        var data = new UserViewModel
         {
             Id = user.Id,
             Email = user.Email
-        });
+        };
+
+        return Ok(new ResultViewModel<UserViewModel>(data));
     }
 
     [HttpPut]
@@ -116,7 +122,7 @@ public class AdministratorController : ControllerBase
         var administratorId = _tokenService.GetUserId(HttpContext);
 
         if (administratorId == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedAdministratorViewModel>("Acesso negado!"));
 
         var administrator = _administratorService.GetAdministrator(administratorId.Value);
         var result = _administratorService.UpdateEmail(administrator!, updateEmailDTO);
@@ -138,7 +144,7 @@ public class AdministratorController : ControllerBase
         var userId = _tokenService.GetUserId(HttpContext);
 
         if (userId == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedAdministratorViewModel>("Acesso negado!"));
 
         var administrator = _administratorService.GetAdministrator(userId.Value);
         var result = _administratorService.UpdatePassword(administrator!, updatePasswordDTO);
@@ -159,11 +165,11 @@ public class AdministratorController : ControllerBase
         var user = _administratorService.GetUserById(id);
 
         if (user == null)
-            return NotFound();
+            return NotFound(new ResultViewModel<UserViewModel>("Usuário não encontrado!"));
 
         _administratorService.DeleteUser(user);
 
-        return NoContent();
+        return Ok(new ResultViewModel<UserViewModel>("Usuário excluído com sucesso!"));
     }
 
 }

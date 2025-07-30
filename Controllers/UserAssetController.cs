@@ -1,7 +1,9 @@
 
+using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TrackMyAssets_API.Domain.DTOs;
+using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
 using TrackMyAssets_API.Domain.ViewModels;
@@ -36,15 +38,14 @@ public class UserAssetController : ControllerBase
         var userId = _tokenService.GetUserId(_http);
 
         if (userId == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
         if (assetService.GetById(userAssetDTO.AssetId) == null)
-            return NotFound();
-
+            return NotFound(new ResultViewModel<UserAssetViewModel>("Ativo não encontrado!"));
 
         var result = _userAssetService.AddUnits(userAssetDTO.AssetId, userId.Value, userAssetDTO.Units, userAssetDTO.Note);
 
-        return Ok(result);
+        return Ok(new ResultViewModel<AssetTransaction>(result));
     }
 
     [HttpPut]
@@ -55,12 +56,11 @@ public class UserAssetController : ControllerBase
         var userId = _tokenService.GetUserId(_http);
 
         if (userId == null)
-            return Unauthorized();
-
+            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
         var result = _userAssetService.RemoveUnits(userAssetDTO.AssetId, userId.Value, userAssetDTO.Units, userAssetDTO.Note);
 
-        return Ok(result);
+        return Ok(new ResultViewModel<AssetTransaction>(result));
     }
 
     [HttpGet]
@@ -69,13 +69,13 @@ public class UserAssetController : ControllerBase
         var userId = _tokenService.GetUserId(_http);
 
         if (userId == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
         var userAssets = _userAssetService.UserAssets(userId.Value);
         var userAssetsViewModel = new List<UserAssetViewModel>();
 
         if (userAssets == null)
-            return NotFound();
+            return NotFound(new ResultViewModel<UserAssetViewModel>("Sem ativos no momento!"));
 
         foreach (var usr in userAssets)
         {
@@ -87,7 +87,7 @@ public class UserAssetController : ControllerBase
             });
         }
 
-        return Ok(userAssets);
+        return Ok(new ResultViewModel<List<UserAssetViewModel>>(userAssetsViewModel));
     }
 
     [HttpGet]
@@ -99,18 +99,20 @@ public class UserAssetController : ControllerBase
         var userId = _tokenService.GetUserId(_http);
 
         if (userId == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
         var userAsset = _userAssetService.GetUserAssetByAssetId(userId.Value, id);
 
         if (userAsset == null)
-            return NotFound();
+            return NotFound(new ResultViewModel<UserAssetViewModel>("Sem ativos no momento!"));
 
-        return Ok(new UserAssetViewModel
+        var data = new UserAssetViewModel
         {
             UserId = userAsset.UserId,
             AssetId = userAsset.AssetId,
             Units = userAsset.Units
-        });
+        };
+
+        return Ok(new ResultViewModel<UserAssetViewModel>(data));
     }
 }

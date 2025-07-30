@@ -1,3 +1,4 @@
+using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -41,12 +42,14 @@ public class UserController : ControllerBase
 
         string token = _tokenService.GenerateTokenJwt(user.Id, user.Email, "User");
 
-        return Ok(new LoggedUserViewModel
+        var data = new LoggedUserViewModel
         {
             Id = user.Id,
             Email = user.Email,
             Token = token
-        });
+        };
+
+        return Ok(new ResultViewModel<LoggedUserViewModel>(data));
     }
 
     [HttpPost]
@@ -57,7 +60,13 @@ public class UserController : ControllerBase
     {
         var user = _userService.Create(userDTO.Email, userDTO.Password);
 
-        return Created($"/users/{user.Id}", new { user.Id });
+        return Created(
+                        $"/users/{user.Id}",
+                        new UserViewModel
+                        {
+                            Id = user.Id,
+                            Email = user.Email
+                        });
     }
 
     [HttpPut]
@@ -70,7 +79,7 @@ public class UserController : ControllerBase
         var userId = _tokenService.GetUserId(HttpContext);
 
         if (userId == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
         var user = _userService.GetById(userId.Value);
         var result = _userService.UpdateEmail(user!, updateEmailDTO);
@@ -92,7 +101,7 @@ public class UserController : ControllerBase
         var userId = _tokenService.GetUserId(HttpContext);
 
         if (userId == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
         var user = _userService.GetById(userId.Value);
         var result = _userService.UpdatePassword(user!, updatePasswordDTO);
@@ -112,12 +121,12 @@ public class UserController : ControllerBase
         var userId = _tokenService.GetUserId(HttpContext);
 
         if (userId == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
         var user = _userService.GetById(userId.Value);
         _userService.DeleteOwnUser(user!);
 
-        return NoContent();
+        return Ok(new ResultViewModel<UserViewModel>("Usuário excluído com sucesso!"));
     }
 
 }

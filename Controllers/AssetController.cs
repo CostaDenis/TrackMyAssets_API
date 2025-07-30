@@ -1,3 +1,4 @@
+using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TrackMyAssets_API.Domain.DTOs;
@@ -26,7 +27,7 @@ public class AssetController : ControllerBase
     )
     {
         if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
-            return BadRequest("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency");
+            return BadRequest(new ResultViewModel<AssetViewModel>("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency"));
 
 
         var asset = new Asset
@@ -38,7 +39,17 @@ public class AssetController : ControllerBase
 
         _assetService.Create(asset);
 
-        return Created($"/assets/{asset.Id}", asset);
+        return Created(
+                        $"/assets/{asset.Id}",
+                        new ResultViewModel<AssetViewModel>(
+                            new AssetViewModel
+                            {
+                                Name = asset.Name,
+                                Symbol = asset.Symbol,
+                                Type = asset.Type.ToString()
+                            }
+                        )
+                    );
     }
 
     [HttpGet]
@@ -61,7 +72,7 @@ public class AssetController : ControllerBase
             });
         }
 
-        return Ok(assets);
+        return Ok(new ResultViewModel<List<AssetViewModel>>(assetsViewModel));
     }
 
     [HttpGet]
@@ -74,14 +85,16 @@ public class AssetController : ControllerBase
         var asset = _assetService.GetById(id);
 
         if (asset == null)
-            return NotFound();
+            return NotFound(new ResultViewModel<AssetViewModel>("Ativo não encontrado."));
 
-        return Ok(new AssetViewModel
+        var data = new AssetViewModel
         {
             Name = asset.Name,
             Symbol = asset.Symbol!,
             Type = asset.Type.ToString()
-        });
+        };
+
+        return Ok(new ResultViewModel<AssetViewModel>(data));
     }
 
     [HttpGet]
@@ -94,14 +107,16 @@ public class AssetController : ControllerBase
         var asset = _assetService.GetByName(name);
 
         if (asset == null)
-            return NotFound();
+            return NotFound(new ResultViewModel<AssetViewModel>("Ativo não encontrado."));
 
-        return Ok(new AssetViewModel
+        var data = new AssetViewModel
         {
             Name = asset.Name,
             Symbol = asset.Symbol!,
             Type = asset.Type.ToString()
-        });
+        };
+
+        return Ok(new ResultViewModel<AssetViewModel>(data));
     }
 
     [HttpPut]
@@ -114,13 +129,10 @@ public class AssetController : ControllerBase
     {
         var asset = _assetService.GetById(id);
         if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
-        {
-            return BadRequest("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency");
-        }
+            return BadRequest(new ResultViewModel<AssetViewModel>("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency"));
 
         if (asset == null)
-            return NotFound();
-
+            return NotFound(new ResultViewModel<AssetViewModel>("Ativo não encontrado."));
 
         asset.Name = assetDTO.Name;
         asset.Symbol = assetDTO.Symbol;
@@ -128,7 +140,14 @@ public class AssetController : ControllerBase
 
         _assetService.Update(asset);
 
-        return Ok(asset);
+        var data = new AssetViewModel
+        {
+            Name = asset.Name,
+            Symbol = asset.Symbol,
+            Type = asset.Type.ToString()
+        };
+
+        return Ok(new ResultViewModel<AssetViewModel>(data));
     }
 
     [HttpDelete]
@@ -141,11 +160,11 @@ public class AssetController : ControllerBase
         var asset = _assetService.GetById(id);
 
         if (asset == null)
-            return NotFound();
+            return NotFound(new ResultViewModel<AssetViewModel>("Ativo não encontrado."));
 
         _assetService.Delete(asset);
 
-        return NoContent();
+        return NotFound(new ResultViewModel<AssetViewModel>("Ativo excluído com sucesso!"));
     }
 
 }
