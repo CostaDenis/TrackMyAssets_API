@@ -123,39 +123,6 @@ public class AdministratorController : ControllerBase
     }
 
     [HttpPut]
-    [Route("change-email")]
-    public IActionResult UpdateEmail(
-        [FromBody] UpdateEmailDTO updateEmailDTO,
-        [FromServices] ITokenService _tokenService
-    )
-    {
-        var administratorId = _tokenService.GetUserId(HttpContext);
-
-        if (administratorId == null)
-            return Unauthorized(new ResultViewModel<LoggedAdministratorViewModel>("Acesso negado!"));
-
-        try
-        {
-            var administrator = _administratorService.GetAdministrator(administratorId.Value);
-            var result = _administratorService.UpdateEmail(administrator!, updateEmailDTO);
-
-            if (!result.Success)
-                return BadRequest(result);
-
-            return Ok(result);
-        }
-        catch (DbUpdateException)
-        {
-            return StatusCode(400, new ResultViewModel<string>("Esse email já está sendo utilizado na aplicação!"));
-        }
-        catch
-        {
-            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
-        }
-
-    }
-
-    [HttpPut]
     [Route("change-password")]
     public IActionResult UpdatePassword(
    [FromBody] UpdatePasswordDTO updatePasswordDTO,

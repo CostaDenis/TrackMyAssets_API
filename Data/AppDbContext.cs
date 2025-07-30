@@ -29,6 +29,7 @@ public class AppDbContext : DbContext
             }
         );
 
+        //Usando Fluent Mapping
         modelBuilder.ApplyConfiguration(new AdministratorMap());
         modelBuilder.ApplyConfiguration(new AssetMap());
         modelBuilder.ApplyConfiguration(new AssetTransactionMap());

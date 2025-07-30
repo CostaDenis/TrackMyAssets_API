@@ -88,28 +88,6 @@ public class AdministratorService : IAdministratorService
         }
     }
 
-    public ResultViewModel<string> UpdateEmail(Administrator administrator, UpdateEmailDTO updateEmailDTO)
-    {
-        if (administrator.Email == updateEmailDTO.NewEmail)
-            return new ResultViewModel<string>("O novo email não pode ser igual à anterior.");
-
-        administrator.Email = updateEmailDTO.NewEmail;
-
-        try
-        {
-            Update(administrator);
-            return new ResultViewModel<string>(data: "Email atualizado com sucesso!");
-        }
-        catch (DbUpdateException)
-        {
-            return new ResultViewModel<string>("Email já em uso");
-        }
-        catch
-        {
-            return new ResultViewModel<string>("Falha interna no servidor!");
-        }
-    }
-
     public void DeleteUser(User user)
     {
         _context.Users.Remove(user);

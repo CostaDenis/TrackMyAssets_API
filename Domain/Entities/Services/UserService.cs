@@ -1,5 +1,6 @@
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.DTOs;
@@ -89,6 +90,11 @@ public class UserService : IUserService
     {
         if (user.Email == updateEmailDTO.NewEmail)
             return new ResultViewModel<string>("O novo email não pode ser igual à anterior.");
+
+        var emaildmin = _context.Administrators.Any(x => x.Email == updateEmailDTO.NewEmail);
+
+        if (emaildmin)
+            return new ResultViewModel<string>("O novo email não pode ser igual ao email do Administrador!.");
 
         user.Email = updateEmailDTO.NewEmail;
 

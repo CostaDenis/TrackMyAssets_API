@@ -12,7 +12,6 @@ public interface IAdministratorService
     Administrator? GetAdministrator(Guid id);
     void Update(Administrator administrator);
     ResultViewModel<string> UpdatePassword(Administrator administrator, UpdatePasswordDTO updatePasswordDTO);
-    ResultViewModel<string> UpdateEmail(Administrator administrator, UpdateEmailDTO updateEmailDTO);
     void DeleteUser(User id);
     bool VerifyPassword(Administrator administrator, string hashedPassword, string providerPassword);
 
