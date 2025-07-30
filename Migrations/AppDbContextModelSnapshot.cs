@@ -42,12 +42,15 @@ namespace TrackMyAssets_API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex(new[] { "Email" }, "IX_Administrator_Email")
+                        .IsUnique();
+
                     b.ToTable("Administrators", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("961d8b8d-8f9a-47a1-b2c7-1df9e46cc99e"),
+                            Id = new Guid("4615c7c6-cd30-4afc-ac3a-759ededfcf7f"),
                             Email = "adm@teste.com",
                             Password = "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA=="
                         });
@@ -76,6 +79,9 @@ namespace TrackMyAssets_API.Migrations
                         .HasColumnName("Type");
 
                     b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Name" }, "IX_Asset_Name")
+                        .IsUnique();
 
                     b.ToTable("Assets", (string)null);
                 });

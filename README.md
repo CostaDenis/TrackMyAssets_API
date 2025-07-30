@@ -1,6 +1,6 @@
 # TrackMyAssets_API
 
-TrackMyAssets_API é uma API REST minimalista desenvolvida em C# com .NET 8, focada no registro e gerenciamento de movimentações de ativos financeiros.
+TrackMyAssets_API é uma API REST desenvolvida em C# com .NET 8, focada no registro e gerenciamento de movimentações de ativos financeiros.
 
 O principal objetivo deste projeto é o aperfeiçoamento de habilidades no desenvolvimento de APIs REST, além de proporcionar maior familiaridade com conceitos do Entity Framework, autenticação com JWT e arquitetura em camadas com injeção de dependência.
 
@@ -21,14 +21,14 @@ Atualmente, a API suporta os seguintes tipos de ativos:
 ![Static Badge](https://img.shields.io/badge/SQL_Database-2B579A.svg?style=for-the-badge)
 ![Static Badge](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge)
 ![Static Badge](https://img.shields.io/badge/Azure-2496ED.svg?style=for-the-badge&logoColor=ffffff)
-![Static Badge](https://img.shields.io/badge/Autenticação_JWT-1b1b33.svg?style=for-the-badge&logoColor=ffffff)
+![Static Badge](https://img.shields.io/badge/JWT-1b1b33.svg?style=for-the-badge&logoColor=ffffff)
 ![Static Badge](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=ffffff)
 
 ## Funcionalidades
 
 - Gerenciamento de usuários
 
-- Autenticação via JWT
+- Autenticação com JWT
 
 - Gerenciamento de ativos
 
@@ -234,11 +234,7 @@ Para testar as funcionalidades do perfil de Administrador, siga os passos abaixo
 3. Copie o valor gerado e cole no arquivo ./Infrastructure/Data/AppDbContext.cs, no campo Password da criação do administrador:
 ![AppDbContext](docs/AppDbContext.png)
 
-Pronto! Agora você já pode fazer login como Administrador utilizando o e-mail adm@teste.com e a senha correspondente ao hash que você definiu.
-
-### Executando o SQL Server via Docker
-
-Caso ainda não tenha configurado o ambiente com Docker, recomendo este excelente artigo <a href="https://balta.io/blog/sql-server-docker"> Configurando o SQL Server no Docker</a> do <a href="https://github.com/balta-io">balta.io</a>.
+Agora você já pode fazer login como Administrador utilizando o e-mail adm@teste.com e a senha correspondente ao hash que você definiu.
 
 
 

@@ -23,5 +23,8 @@ public class AdministratorMap : IEntityTypeConfiguration<Administrator>
         .HasColumnName("Password")
         .HasColumnType("VARCHAR")
         .HasMaxLength(256);
+
+        builder.HasIndex(x => x.Email, "IX_Administrator_Email")
+            .IsUnique();
     }
 }

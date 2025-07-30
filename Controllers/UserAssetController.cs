@@ -43,9 +43,18 @@ public class UserAssetController : ControllerBase
         if (assetService.GetById(userAssetDTO.AssetId) == null)
             return NotFound(new ResultViewModel<UserAssetViewModel>("Ativo não encontrado!"));
 
-        var result = _userAssetService.AddUnits(userAssetDTO.AssetId, userId.Value, userAssetDTO.Units, userAssetDTO.Note);
+        try
+        {
+            var result = _userAssetService.AddUnits(userAssetDTO.AssetId, userId.Value, userAssetDTO.Units, userAssetDTO.Note);
 
-        return Ok(new ResultViewModel<AssetTransaction>(result));
+            return Ok(new ResultViewModel<AssetTransaction>(result));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
+
+
     }
 
     [HttpPut]
@@ -58,9 +67,17 @@ public class UserAssetController : ControllerBase
         if (userId == null)
             return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
-        var result = _userAssetService.RemoveUnits(userAssetDTO.AssetId, userId.Value, userAssetDTO.Units, userAssetDTO.Note);
+        try
+        {
+            var result = _userAssetService.RemoveUnits(userAssetDTO.AssetId, userId.Value, userAssetDTO.Units, userAssetDTO.Note);
 
-        return Ok(new ResultViewModel<AssetTransaction>(result));
+            return Ok(new ResultViewModel<AssetTransaction>(result));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
+
     }
 
     [HttpGet]

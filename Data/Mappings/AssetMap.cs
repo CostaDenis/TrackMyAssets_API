@@ -34,5 +34,8 @@ public class AssetMap : IEntityTypeConfiguration<Asset>
         .HasConstraintName("FK_Assets_AssetId")
         .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasIndex(x => x.Name, "IX_Asset_Name")
+            .IsUnique();
+
     }
 }

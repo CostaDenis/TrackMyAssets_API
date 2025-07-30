@@ -39,7 +39,6 @@ public class UserController : ControllerBase
         if (user == null)
             return Unauthorized();
 
-
         string token = _tokenService.GenerateTokenJwt(user.Id, user.Email, "User");
 
         var data = new LoggedUserViewModel
@@ -58,15 +57,27 @@ public class UserController : ControllerBase
         [FromBody] UserDTO userDTO
     )
     {
-        var user = _userService.Create(userDTO.Email, userDTO.Password);
+        try
+        {
+            var user = _userService.Create(userDTO.Email, userDTO.Password);
 
-        return Created(
-                        $"/users/{user.Id}",
-                        new UserViewModel
-                        {
-                            Id = user.Id,
-                            Email = user.Email
-                        });
+            return Created(
+                            $"/users/{user.Id}",
+                            new UserViewModel
+                            {
+                                Id = user.Id,
+                                Email = user.Email
+                            });
+        }
+        catch (DbUpdateException)
+        {
+            return StatusCode(400, new ResultViewModel<string>("Esse email já está sendo utilizado na aplicação!"));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
+
     }
 
     [HttpPut]
@@ -81,13 +92,24 @@ public class UserController : ControllerBase
         if (userId == null)
             return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
-        var user = _userService.GetById(userId.Value);
-        var result = _userService.UpdateEmail(user!, updateEmailDTO);
+        try
+        {
+            var user = _userService.GetById(userId.Value);
+            var result = _userService.UpdateEmail(user!, updateEmailDTO);
 
-        if (!result.Success)
-            return BadRequest(result);
+            if (!result.Success)
+                return BadRequest(result);
 
-        return Ok(result);
+            return Ok(result);
+        }
+        catch (DbUpdateException)
+        {
+            return StatusCode(400, new ResultViewModel<string>("Esse email já está sendo utilizado na aplicação!"));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
 
     }
 
@@ -103,13 +125,20 @@ public class UserController : ControllerBase
         if (userId == null)
             return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
-        var user = _userService.GetById(userId.Value);
-        var result = _userService.UpdatePassword(user!, updatePasswordDTO);
+        try
+        {
+            var user = _userService.GetById(userId.Value);
+            var result = _userService.UpdatePassword(user!, updatePasswordDTO);
 
-        if (!result.Success)
-            return BadRequest(result);
+            if (!result.Success)
+                return BadRequest(result);
 
-        return Ok(result);
+            return Ok(result);
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
 
     }
 
@@ -123,10 +152,18 @@ public class UserController : ControllerBase
         if (userId == null)
             return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
-        var user = _userService.GetById(userId.Value);
-        _userService.DeleteOwnUser(user!);
+        try
+        {
+            var user = _userService.GetById(userId.Value);
+            _userService.DeleteOwnUser(user!);
 
-        return Ok(new ResultViewModel<UserViewModel>("Usuário excluído com sucesso!"));
+            return Ok(new ResultViewModel<UserViewModel>("Usuário excluído com sucesso!"));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
+
     }
 
 }

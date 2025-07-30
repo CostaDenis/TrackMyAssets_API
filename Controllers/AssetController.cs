@@ -1,6 +1,7 @@
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
@@ -29,27 +30,37 @@ public class AssetController : ControllerBase
         if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
             return BadRequest(new ResultViewModel<AssetViewModel>("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency"));
 
-
-        var asset = new Asset
+        try
         {
-            Name = assetDTO.Name,
-            Symbol = assetDTO.Symbol,
-            Type = parsedType
-        };
+            var asset = new Asset
+            {
+                Name = assetDTO.Name,
+                Symbol = assetDTO.Symbol,
+                Type = parsedType
+            };
 
-        _assetService.Create(asset);
+            _assetService.Create(asset);
 
-        return Created(
-                        $"/assets/{asset.Id}",
-                        new ResultViewModel<AssetViewModel>(
-                            new AssetViewModel
-                            {
-                                Name = asset.Name,
-                                Symbol = asset.Symbol,
-                                Type = asset.Type.ToString()
-                            }
-                        )
-                    );
+            return Created(
+                            $"/assets/{asset.Id}",
+                            new ResultViewModel<AssetViewModel>(
+                                new AssetViewModel
+                                {
+                                    Name = asset.Name,
+                                    Symbol = asset.Symbol,
+                                    Type = asset.Type.ToString()
+                                }
+                            )
+                        );
+        }
+        catch (DbUpdateException)
+        {
+            return StatusCode(400, new ResultViewModel<string>("Esse Nome já está sendo utilizado na aplicação!"));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
     }
 
     [HttpGet]
@@ -60,19 +71,28 @@ public class AssetController : ControllerBase
     )
     {
         var assetsViewModel = new List<AssetViewModel>();
-        var assets = _assetService.GetAll(page, pageSize);
 
-        foreach (var assts in assets)
+        try
         {
-            assetsViewModel.Add(new AssetViewModel
+            var assets = _assetService.GetAll(page, pageSize);
+
+            foreach (var assts in assets)
             {
-                Name = assts.Name,
-                Symbol = assts.Symbol!,
-                Type = assts.Type.ToString()
-            });
+                assetsViewModel.Add(new AssetViewModel
+                {
+                    Name = assts.Name,
+                    Symbol = assts.Symbol!,
+                    Type = assts.Type.ToString()
+                });
+            }
+
+            return Ok(new ResultViewModel<List<AssetViewModel>>(assetsViewModel));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
         }
 
-        return Ok(new ResultViewModel<List<AssetViewModel>>(assetsViewModel));
     }
 
     [HttpGet]
@@ -134,20 +154,32 @@ public class AssetController : ControllerBase
         if (asset == null)
             return NotFound(new ResultViewModel<AssetViewModel>("Ativo não encontrado."));
 
-        asset.Name = assetDTO.Name;
-        asset.Symbol = assetDTO.Symbol;
-        asset.Type = parsedType;
-
-        _assetService.Update(asset);
-
-        var data = new AssetViewModel
+        try
         {
-            Name = asset.Name,
-            Symbol = asset.Symbol,
-            Type = asset.Type.ToString()
-        };
+            asset.Name = assetDTO.Name;
+            asset.Symbol = assetDTO.Symbol;
+            asset.Type = parsedType;
 
-        return Ok(new ResultViewModel<AssetViewModel>(data));
+            _assetService.Update(asset);
+
+            var data = new AssetViewModel
+            {
+                Name = asset.Name,
+                Symbol = asset.Symbol,
+                Type = asset.Type.ToString()
+            };
+
+            return Ok(new ResultViewModel<AssetViewModel>(data));
+        }
+        catch (DbUpdateException)
+        {
+            return StatusCode(400, new ResultViewModel<string>("Esse Nome já está sendo utilizado na aplicação!"));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
+
     }
 
     [HttpDelete]
@@ -162,9 +194,16 @@ public class AssetController : ControllerBase
         if (asset == null)
             return NotFound(new ResultViewModel<AssetViewModel>("Ativo não encontrado."));
 
-        _assetService.Delete(asset);
+        try
+        {
+            _assetService.Delete(asset);
+            return NotFound(new ResultViewModel<AssetViewModel>("Ativo excluído com sucesso!"));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
 
-        return NotFound(new ResultViewModel<AssetViewModel>("Ativo excluído com sucesso!"));
     }
 
 }

@@ -12,8 +12,8 @@ using TrackMyAssets_API.Data;
 namespace TrackMyAssets_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250702235500_v6")]
-    partial class v6
+    [Migration("20250730225743_EmailUnique")]
+    partial class EmailUnique
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,21 +34,26 @@ namespace TrackMyAssets_API.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("VARCHAR")
+                        .HasColumnName("Email");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("VARCHAR")
+                        .HasColumnName("Password");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Administrators");
+                    b.HasIndex(new[] { "Email" }, "IX_Administrator_Email")
+                        .IsUnique();
+
+                    b.ToTable("Administrators", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("5994a246-99ca-42e6-aac0-692d95e5617e"),
+                            Id = new Guid("4615c7c6-cd30-4afc-ac3a-759ededfcf7f"),
                             Email = "adm@teste.com",
                             Password = "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA=="
                         });
@@ -63,18 +68,25 @@ namespace TrackMyAssets_API.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Name");
 
                     b.Property<string>("Symbol")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(8)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Symbol");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Type");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Assets");
+                    b.HasIndex(new[] { "Name" }, "IX_Asset_Name")
+                        .IsUnique();
+
+                    b.ToTable("Assets", (string)null);
                 });
 
             modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.AssetTransaction", b =>
@@ -84,21 +96,31 @@ namespace TrackMyAssets_API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AssetId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AssetId");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("Date")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("Note")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("NVARCHAR");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("VARCHAR");
 
                     b.Property<decimal>("UnitsChanged")
-                        .HasPrecision(18, 6)
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("DECIMAL(18,2)")
+                        .HasColumnName("UnitsChanged");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserId");
 
                     b.HasKey("Id");
 
@@ -106,7 +128,7 @@ namespace TrackMyAssets_API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AssetTransactions");
+                    b.ToTable("AssetTransactions", (string)null);
                 });
 
             modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.User", b =>
@@ -118,16 +140,21 @@ namespace TrackMyAssets_API.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("VARCHAR")
+                        .HasColumnName("Email");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("VARCHAR")
+                        .HasColumnName("Password");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex(new[] { "Email" }, "IX_User_Email")
+                        .IsUnique();
+
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.UserAsset", b =>
@@ -137,14 +164,17 @@ namespace TrackMyAssets_API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AssetId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AssetId");
 
                     b.Property<decimal>("Units")
-                        .HasPrecision(18, 6)
-                        .HasColumnType("decimal(18,6)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DECIMAL(18,2)")
+                        .HasDefaultValue(0m);
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserId");
 
                     b.HasKey("Id");
 
@@ -152,7 +182,7 @@ namespace TrackMyAssets_API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserAssets");
+                    b.ToTable("UserAssets", (string)null);
                 });
 
             modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.AssetTransaction", b =>
@@ -161,13 +191,15 @@ namespace TrackMyAssets_API.Migrations
                         .WithMany()
                         .HasForeignKey("AssetId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_AssetTransactions_AssetId");
 
                     b.HasOne("TrackMyAssets_API.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_AssetTransactions_UserId");
 
                     b.Navigation("Asset");
 
@@ -180,13 +212,15 @@ namespace TrackMyAssets_API.Migrations
                         .WithMany("UserAssets")
                         .HasForeignKey("AssetId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_UserAssets_AssetId");
 
                     b.HasOne("TrackMyAssets_API.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("UserAssets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_Users_UserId");
 
                     b.Navigation("Asset");
 
@@ -194,6 +228,11 @@ namespace TrackMyAssets_API.Migrations
                 });
 
             modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.Asset", b =>
+                {
+                    b.Navigation("UserAssets");
+                });
+
+            modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.User", b =>
                 {
                     b.Navigation("UserAssets");
                 });
