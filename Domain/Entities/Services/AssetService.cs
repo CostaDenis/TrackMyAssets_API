@@ -5,18 +5,19 @@ namespace TrackMyAssets_API.Domain.Entities.Services;
 
 public class AssetService : IAssetService
 {
+    private readonly AppDbContext _context;
 
     public AssetService(AppDbContext context)
     {
         _context = context;
     }
 
-    private readonly AppDbContext _context;
-
-    public void Create(Asset asset)
+    public List<Asset> GetAll(int page = 0, int pageSize = 10)
     {
-        _context.Assets.Add(asset);
-        _context.SaveChanges();
+        var query = _context.Assets.AsQueryable();
+        query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
+
+        return query.ToList();
     }
 
     public Asset? GetById(Guid id)
@@ -25,14 +26,10 @@ public class AssetService : IAssetService
     public Asset? GetByName(string name)
         => _context.Assets.Where(x => x.Name == name).FirstOrDefault();
 
-
-
-    public List<Asset> GetAll(int page = 0, int pageSize = 10)
+    public void Create(Asset asset)
     {
-        var query = _context.Assets.AsQueryable();
-        query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
-
-        return query.ToList();
+        _context.Assets.Add(asset);
+        _context.SaveChanges();
     }
 
     public void Update(Asset asset)

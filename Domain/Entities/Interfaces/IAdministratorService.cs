@@ -6,10 +6,11 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces;
 
 public interface IAdministratorService
 {
-    Administrator? Login(LoginDTO loginDTO);
-    List<User> GetAllUsers(int? page);
-    User? GetUserById(Guid id);
+    List<int> GetDataDashboard();
+    List<User> GetAllUsers(int page = 0, int pageSize = 10);
     Administrator? GetAdministrator(Guid id);
+    User? GetUserById(Guid id);
+    Administrator? Login(LoginDTO loginDTO);
     void Update(Administrator administrator);
     ResultViewModel<string> UpdatePassword(Administrator administrator, UpdatePasswordDTO updatePasswordDTO);
     void DeleteUser(User id);

@@ -123,39 +123,49 @@ Abaixo estão listadas as principais rotas da aplicação, agrupadas por funçã
 
 | Método | Rota                      | Descrição                                  | Autenticação |
 |--------|---------------------------|--------------------------------------------|--------------|
-| POST   | `/administrators/login`   | Login do administrador                     | ❌           |
+| GET    | `/administrators/dashboard`   | Overview para administrador            | ✅ (Admin)    |
 | GET    | `/administrators/users`   | Listagem paginada de usuários              | ✅ (Admin)    |
-| GET    | `/administrators/users/{id}` | Detalhes de um usuário específico        | ✅ (Admin)    |
-| DELETE | `/administrators/users/{id}` | Exclusão de usuário                      | ✅ (Admin)    |
+| GET    | `/administrators/users/{id}` | Detalhes de um usuário específico       | ✅ (Admin)    |
+| POST   | `/administrators/login`   | Login do administrador                     | ❌             |
+| PUT    | `/administrators/change-password` | Atualização da própria senha       | ✅ (Admin)    |
+| DELETE | `/administrators/users/{id}` | Exclusão de usuário                     | ✅ (Admin)    |
 
 ### Usuários (`/users`)
 
 | Método | Rota              | Descrição                               | Autenticação |
 |--------|-------------------|-----------------------------------------|--------------|
-| POST   | `/users`          | Criação de novo usuário                 | ❌           |
-| POST   | `/users/login`    | Login do usuário                        | ❌           |
-| PUT    | `/users`          | Atualização dos próprios dados         | ✅ (User)     |
-| DELETE | `/users`          | Exclusão da própria conta              | ✅ (User)     |
+| POST   | `/users/login`    | Login do usuário                        | ❌            |
+| POST   | `/users`          | Criação de novo usuário                 | ❌            |
+| PUT    | `/users`          | Atualização dos próprios dados          | ✅ (User)    |
+| PUT    | `/users/change-password` | Atualização da própria senha     | ✅ (User)    |
+| PUT    | `/users/change-email` | Atualização do própria email        | ✅ (User)    |
+| DELETE | `/users`          | Exclusão da própria conta               | ✅ (User)    |
 
 ### Ativos (`/assets`)
 
 | Método | Rota              | Descrição                               | Autenticação |
 |--------|-------------------|-----------------------------------------|--------------|
-| POST   | `/assets`         | Criação de novo ativo                   | ✅ (Admin)    |
 | GET    | `/assets`         | Listagem de ativos                      | ✅ (User/Admin) |
 | GET    | `/assets/{id}`    | Detalhes de ativo específico            | ✅ (User/Admin) |
-| GET    | `/assets/{name}`    | Detalhes de ativo específico            | ✅ (User/Admin) |
-| PUT    | `/assets/{id}`    | Atualização de ativo                    | ✅ (Admin)    |
-| DELETE | `/assets/{id}`    | Exclusão de ativo                       | ✅ (Admin)    |
+| GET    | `/assets/{name}`    | Detalhes de ativo específico          | ✅ (User/Admin) |
+| POST   | `/assets`         | Criação de novo ativo                   | ✅ (Admin)      |
+| PUT    | `/assets/{id}`    | Atualização de ativo                    | ✅ (Admin)      |
+| DELETE | `/assets/{id}`    | Exclusão de ativo                       | ✅ (Admin)      |
 
 ### Movimentações de Ativos (`/users/assets`)
 
 | Método | Rota                   | Descrição                           | Autenticação |
 |--------|------------------------|-------------------------------------|--------------|
+| GET    | `/users/assets`        | Listar todos os ativos do usuário                | ✅ (User)     |
+| GET    | `/users/assets/{id}`   | Detalhes de um ativo do usuário                  | ✅ (User)     |
 | POST   | `/users/assets`        | Adicionar as primeiras unidades de um ativo      | ✅ (User)     |
-| PUT    | `/users/assets`        | Atualizar unidades de um ativo        | ✅ (User)     |
-| GET    | `/users/assets`        | Listar todos os ativos do usuário   | ✅ (User)     |
-| GET    | `/users/assets/{id}`   | Detalhes de um ativo do usuário     | ✅ (User)     |
+| PUT    | `/users/assets`        | Atualizar unidades de um ativo                   | ✅ (User)     |
+
+### Health (`/users/assets`)
+
+| Método | Rota                   | Descrição                           | Autenticação |
+|--------|------------------------|-------------------------------------|--------------|
+| GET    | `/`   | Verifica a disponibilidade da API     | ❌           |
 
 
 

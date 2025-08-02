@@ -25,9 +25,10 @@ public class AssetTransactionService : IAssetTransactionService
         return query.ToList();
     }
 
+    public AssetTransaction? GetById(Guid assetTransactionId)
+        => _context.AssetTransactions.Find(assetTransactionId);
+
     public AssetTransaction? GetByAssetId(Guid assetId)
         => _context.AssetTransactions.FirstOrDefault(x => x.AssetId == assetId);
 
-    public AssetTransaction? GetById(Guid assetTransactionId)
-        => _context.AssetTransactions.Find(assetTransactionId);
 }

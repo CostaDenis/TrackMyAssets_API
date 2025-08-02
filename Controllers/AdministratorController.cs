@@ -23,66 +23,32 @@ public class AdministratorController : ControllerBase
     }
 
     [HttpGet]
-    [Route("overview")]
-    public IActionResult Dashboard(
-        [FromServices] IUserService _userService,
-        [FromServices] IAssetService _assetService,
-        [FromServices] IUserAssetService _userAssetService
-    )
+    [Route("dashboard")]
+    public IActionResult GetDataDashboard()
     {
-
-        var totalUsers = _userService.CountUser();
-        var totalAssets = _assetService.CountAsset();
-        var totalUserAssets = _userAssetService.CountUserAsset();
-
-        var data = new DashBoardViewModel
+        var data = _administratorService.GetDataDashboard();
+        var viewModelDashBoard = new DashBoardViewModel
         {
-            TotalUsers = totalUsers,
-            TotalAssets = totalAssets,
-            TotalUserAssets = totalUserAssets
+            TotalUsers = data[0],
+            TotalAssets = data[1],
+            TotalUserAssets = data[2]
         };
 
-        return Ok(new ResultViewModel<DashBoardViewModel>(data));
+        return Ok(new ResultViewModel<DashBoardViewModel>(viewModelDashBoard));
     }
-
-
-    [HttpPost]
-    [AllowAnonymous]
-    [Route("login")]
-    public IActionResult Login(
-        [FromBody] LoginDTO loginDTO,
-        [FromServices] ITokenService _tokenService
-    )
-    {
-        var adm = _administratorService.Login(loginDTO);
-
-        if (adm == null)
-            return Unauthorized(new ResultViewModel<LoggedAdministratorViewModel>("Acesso negado!"));
-
-        string token = _tokenService.GenerateTokenJwt(adm.Id, adm.Email, "Administrator");
-
-        var data = new LoggedAdministratorViewModel
-        {
-            Id = adm.Id,
-            Email = adm.Email,
-            Token = token
-        };
-
-        return Ok(new ResultViewModel<LoggedAdministratorViewModel>(data));
-    }
-
 
     [HttpGet]
     [Route("users")]
     public IActionResult GetAllUsers(
-        [FromQuery] int? page
+        [FromQuery] int page,
+        [FromQuery] int pageSize
     )
     {
         var usersViewModel = new List<UserViewModel>();
 
         try
         {
-            var users = _administratorService.GetAllUsers(page);
+            var users = _administratorService.GetAllUsers(page, pageSize);
 
             foreach (var usr in users)
             {
@@ -122,12 +88,37 @@ public class AdministratorController : ControllerBase
         return Ok(new ResultViewModel<UserViewModel>(data));
     }
 
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("login")]
+    public IActionResult Login(
+        [FromBody] LoginDTO loginDTO,
+        [FromServices] ITokenService _tokenService
+    )
+    {
+        var adm = _administratorService.Login(loginDTO);
+
+        if (adm == null)
+            return Unauthorized(new ResultViewModel<LoggedAdministratorViewModel>("Acesso negado!"));
+
+        string token = _tokenService.GenerateTokenJwt(adm.Id, adm.Email, "Administrator");
+
+        var data = new LoggedAdministratorViewModel
+        {
+            Id = adm.Id,
+            Email = adm.Email,
+            Token = token
+        };
+
+        return Ok(new ResultViewModel<LoggedAdministratorViewModel>(data));
+    }
+
     [HttpPut]
     [Route("change-password")]
-    public IActionResult UpdatePassword(
-   [FromBody] UpdatePasswordDTO updatePasswordDTO,
-   [FromServices] ITokenService _tokenService
-)
+    public IActionResult Update(
+        [FromBody] UpdatePasswordDTO updatePasswordDTO,
+        [FromServices] ITokenService _tokenService
+    )
     {
         var userId = _tokenService.GetUserId(HttpContext);
 

@@ -21,48 +21,6 @@ public class AssetController : ControllerBase
         _assetService = assetService;
     }
 
-    [HttpPost]
-    [Authorize(Roles = "Administrator")]
-    public IActionResult CreateAsset(
-        [FromBody] AssetDTO assetDTO
-    )
-    {
-        if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
-            return BadRequest(new ResultViewModel<AssetViewModel>("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency"));
-
-        try
-        {
-            var asset = new Asset
-            {
-                Name = assetDTO.Name,
-                Symbol = assetDTO.Symbol,
-                Type = parsedType
-            };
-
-            _assetService.Create(asset);
-
-            return Created(
-                            $"/assets/{asset.Id}",
-                            new ResultViewModel<AssetViewModel>(
-                                new AssetViewModel
-                                {
-                                    Name = asset.Name,
-                                    Symbol = asset.Symbol,
-                                    Type = asset.Type.ToString()
-                                }
-                            )
-                        );
-        }
-        catch (DbUpdateException)
-        {
-            return StatusCode(400, new ResultViewModel<string>("Esse Nome já está sendo utilizado na aplicação!"));
-        }
-        catch
-        {
-            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
-        }
-    }
-
     [HttpGet]
     [Authorize(Roles = "Administrator, User")]
     public IActionResult GetAll(
@@ -137,6 +95,48 @@ public class AssetController : ControllerBase
         };
 
         return Ok(new ResultViewModel<AssetViewModel>(data));
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Administrator")]
+    public IActionResult Create(
+        [FromBody] AssetDTO assetDTO
+    )
+    {
+        if (!Enum.TryParse<EAsset>(assetDTO.Type, true, out var parsedType))
+            return BadRequest(new ResultViewModel<AssetViewModel>("Tipo de ativo indisponível! As opções são: Stock, RealStateFund e Cryptocurrency"));
+
+        try
+        {
+            var asset = new Asset
+            {
+                Name = assetDTO.Name,
+                Symbol = assetDTO.Symbol,
+                Type = parsedType
+            };
+
+            _assetService.Create(asset);
+
+            return Created(
+                            $"/assets/{asset.Id}",
+                            new ResultViewModel<AssetViewModel>(
+                                new AssetViewModel
+                                {
+                                    Name = asset.Name,
+                                    Symbol = asset.Symbol,
+                                    Type = asset.Type.ToString()
+                                }
+                            )
+                        );
+        }
+        catch (DbUpdateException)
+        {
+            return StatusCode(400, new ResultViewModel<string>("Esse Nome já está sendo utilizado na aplicação!"));
+        }
+        catch
+        {
+            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+        }
     }
 
     [HttpPut]

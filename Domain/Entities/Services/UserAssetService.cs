@@ -6,12 +6,22 @@ namespace TrackMyAssets_API.Domain.Entities.Services;
 public class UserAssetService : IUserAssetService
 {
 
+    private readonly AppDbContext _context;
+
     public UserAssetService(AppDbContext context)
     {
         _context = context;
     }
 
-    private readonly AppDbContext _context;
+    public List<UserAsset> GetUserAssets(Guid userId)
+        => _context.UserAssets
+            .Where(x => x.UserId == userId)
+            .ToList();
+
+    public UserAsset? GetUserAssetByAssetId(Guid userId, Guid assetId)
+        => _context.UserAssets
+            .FirstOrDefault(x => x.UserId == userId &&
+            x.AssetId == assetId);
 
     public AssetTransaction AddUnits(Guid assetId, Guid userId, decimal units, string? note = null)
     {
@@ -102,16 +112,6 @@ public class UserAssetService : IUserAssetService
 
         return AssetTransaction;
     }
-
-    public List<UserAsset> UserAssets(Guid userId)
-        => _context.UserAssets
-            .Where(x => x.UserId == userId)
-            .ToList();
-
-    public UserAsset? GetUserAssetByAssetId(Guid userId, Guid assetId)
-        => _context.UserAssets
-            .FirstOrDefault(x => x.UserId == userId &&
-            x.AssetId == assetId);
 
     public bool CheckData(Guid assetId, Guid userId)
     {

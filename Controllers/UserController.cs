@@ -53,7 +53,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    public IActionResult Post(
+    public IActionResult Create(
         [FromBody] UserDTO userDTO
     )
     {
@@ -116,9 +116,9 @@ public class UserController : ControllerBase
     [HttpPut]
     [Route("change-password")]
     public IActionResult UpdatePassword(
-    [FromBody] UpdatePasswordDTO updatePasswordDTO,
-    [FromServices] ITokenService _tokenService
-)
+        [FromBody] UpdatePasswordDTO updatePasswordDTO,
+        [FromServices] ITokenService _tokenService
+    )
     {
         var userId = _tokenService.GetUserId(HttpContext);
 
@@ -143,7 +143,7 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete]
-    public IActionResult Delete(
+    public IActionResult DeleteOwnUser(
         [FromServices] ITokenService _tokenService
     )
     {

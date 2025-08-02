@@ -19,6 +19,9 @@ public class UserService : IUserService
         _context = context;
     }
 
+    public User? GetById(Guid id)
+        => _context.Users.Where(x => x.Id == id).FirstOrDefault();
+
     public User? Login(LoginDTO loginDTO)
     {
         var user = _context.Users.FirstOrDefault(x => x.Email == loginDTO.Email);
@@ -52,9 +55,6 @@ public class UserService : IUserService
 
         return user;
     }
-
-    public User? GetById(Guid id)
-        => _context.Users.Where(x => x.Id == id).FirstOrDefault();
 
     public void Update(User user)
     {
