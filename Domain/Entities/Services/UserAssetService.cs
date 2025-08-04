@@ -23,19 +23,23 @@ public class UserAssetService : IUserAssetService
             .FirstOrDefault(x => x.UserId == userId &&
             x.AssetId == assetId);
 
-    public AssetTransaction AddUnits(Guid assetId, Guid userId, decimal units, string? note = null)
+    public AssetTransaction AddTransaction(Guid assetId, Guid userId, decimal units, string? note = null)
     {
-
-        if (units <= 0)
-            throw new ArgumentException("As unidades devem ser positivas!");
+        if (units == 0)
+            throw new ArgumentException("As unidades não podem ser zero!");
 
         if (CheckData(assetId, userId) == false)
             throw new ArgumentException("Erro. Confira os IDs!");
 
+        var currentUnits = GetAssetAmount(assetId, userId);
+
+        if (units < 0 && currentUnits + units < 0)
+            throw new InvalidOperationException("Saldo insuficiente para remover essa quantidade de unidades.");
 
         var asset = _context.Assets.Find(assetId)!;
         var user = _context.Users.Find(userId)!;
-        var AssetTransaction = new AssetTransaction
+
+        var assetTransaction = new AssetTransaction
         {
             AssetId = assetId,
             Asset = asset,
@@ -45,69 +49,10 @@ public class UserAssetService : IUserAssetService
             Note = note
         };
 
-        var existingUserAsset = GetUserAssetByAssetId(userId, assetId);
-
-        if (existingUserAsset == null)
-        {
-            var userAsset = new UserAsset
-            {
-                UserId = userId,
-                AssetId = assetId,
-                Units = units
-            };
-
-            _context.UserAssets.Add(userAsset);
-        }
-        else
-        {
-            existingUserAsset.Units += units;
-            _context.UserAssets.Update(existingUserAsset);
-        }
-
-        _context.AssetTransactions.Add(AssetTransaction);
+        _context.AssetTransactions.Add(assetTransaction);
         _context.SaveChanges();
 
-        return AssetTransaction;
-    }
-
-    public AssetTransaction RemoveUnits(Guid assetId, Guid userId, decimal units, string? note = null)
-    {
-        if (CheckData(assetId, userId) == false)
-            throw new ArgumentException("Erro. Confira os IDs!");
-
-
-        var asset = _context.Assets.Find(assetId)!;
-        var user = _context.Users.Find(userId)!;
-        var AssetTransaction = new AssetTransaction
-        {
-            AssetId = assetId,
-            Asset = asset,
-            UserId = userId,
-            User = user,
-            UnitsChanged = units,
-            Note = note
-        };
-
-        var existingUserAsset = GetUserAssetByAssetId(userId, assetId);
-
-        if (existingUserAsset == null)
-        {
-            throw new ArgumentException("Só é possível remover dos ativos que possui!");
-        }
-
-        if (existingUserAsset.Units + units < 0)
-        {
-            throw new InvalidOperationException("Saldo insuficiente para remoção.");
-        }
-
-        existingUserAsset.Units += units;
-        _context.UserAssets.Update(existingUserAsset);
-
-
-        _context.AssetTransactions.Add(AssetTransaction);
-        _context.SaveChanges();
-
-        return AssetTransaction;
+        return assetTransaction;
     }
 
     public bool CheckData(Guid assetId, Guid userId)
@@ -116,12 +61,16 @@ public class UserAssetService : IUserAssetService
         var user = _context.Users.Find(userId);
 
         if (asset == null || user == null)
-        {
             return false;
-        }
 
         return true;
     }
+
+    public decimal GetAssetAmount(Guid assetId, Guid userId)
+        => _context.AssetTransactions
+                .Where(t => t.UserId == userId && t.AssetId == assetId)
+                .Sum(t => t.UnitsChanged);
+
 
     public int CountUserAsset()
         => _context.UserAssets.Count();

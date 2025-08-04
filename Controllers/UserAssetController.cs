@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
-using TrackMyAssets_API.Domain.Entities.Services;
 using TrackMyAssets_API.Domain.ViewModels;
 
 namespace TrackMyAssets_API.Controllers;
@@ -31,10 +30,6 @@ public class UserAssetController : ControllerBase
     public IActionResult GetUserAssets()
     {
         var userId = _tokenService.GetUserId(this.HttpContext);
-
-        // if (userId == null)
-        //     return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
-
         var userAssets = _userAssetService.GetUserAssets(userId);
         var userAssetsViewModel = new List<UserAssetViewModel>();
 
@@ -47,7 +42,7 @@ public class UserAssetController : ControllerBase
             {
                 UserId = usr.UserId,
                 AssetId = usr.AssetId,
-                Units = usr.Units
+                Units = _userAssetService.GetAssetAmount(usr.AssetId, usr.UserId)
             });
         }
 
@@ -61,10 +56,6 @@ public class UserAssetController : ControllerBase
     )
     {
         var userId = _tokenService.GetUserId(this.HttpContext);
-
-        // if (userId == null)
-        //     return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
-
         var userAsset = _userAssetService.GetUserAssetByAssetId(userId, id);
 
         if (userAsset == null)
@@ -81,7 +72,7 @@ public class UserAssetController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult AddUnits(
+    public IActionResult AddTransaction(
         [FromBody] UserAssetAddDTO userAssetDTO,
         IAssetService _assetService
     )
@@ -93,7 +84,7 @@ public class UserAssetController : ControllerBase
 
         try
         {
-            var result = _userAssetService.AddUnits(userAssetDTO.AssetId, userId, userAssetDTO.Units, userAssetDTO.Note);
+            var result = _userAssetService.AddTransaction(userAssetDTO.AssetId, userId, userAssetDTO.Units, userAssetDTO.Note);
 
             return Ok(new ResultViewModel<AssetTransaction>(result));
         }
@@ -105,22 +96,4 @@ public class UserAssetController : ControllerBase
 
     }
 
-    // [HttpPost]
-    // public IActionResult UpdateUnits(
-    //     [FromBody] UserAssetUpdateDTO userAssetDTO
-    // )
-    // {
-    //     var userId = _tokenService.GetUserId(this.HttpContext);
-
-    //     try
-    //     {
-    //         var result = _userAssetService.RemoveUnits(userAssetDTO.AssetId, userId, userAssetDTO.Units, userAssetDTO.Note);
-    //         return Ok(new ResultViewModel<AssetTransaction>(result));
-    //     }
-    //     catch
-    //     {
-    //         return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
-    //     }
-
-    // }
 }
