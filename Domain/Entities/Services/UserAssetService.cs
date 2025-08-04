@@ -72,9 +72,6 @@ public class UserAssetService : IUserAssetService
 
     public AssetTransaction RemoveUnits(Guid assetId, Guid userId, decimal units, string? note = null)
     {
-        if (units >= 0)
-            throw new ArgumentException("As unidades devem ser negativas!");
-
         if (CheckData(assetId, userId) == false)
             throw new ArgumentException("Erro. Confira os IDs!");
 

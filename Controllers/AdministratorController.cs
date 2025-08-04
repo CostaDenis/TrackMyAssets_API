@@ -120,14 +120,11 @@ public class AdministratorController : ControllerBase
         [FromServices] ITokenService _tokenService
     )
     {
-        var userId = _tokenService.GetUserId(HttpContext);
-
-        if (userId == null)
-            return Unauthorized(new ResultViewModel<LoggedAdministratorViewModel>("Acesso negado!"));
+        var admId = _tokenService.GetUserId(this.HttpContext);
 
         try
         {
-            var administrator = _administratorService.GetAdministrator(userId.Value);
+            var administrator = _administratorService.GetAdministrator(admId);
             var result = _administratorService.UpdatePassword(administrator!, updatePasswordDTO);
 
             if (!result.Success)

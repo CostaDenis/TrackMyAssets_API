@@ -5,22 +5,20 @@ namespace TrackMyAssets_API.Domain.Entities.Services;
 
 public class AssetTransactionService : IAssetTransactionService
 {
+    private readonly AppDbContext _context;
 
     public AssetTransactionService(AppDbContext context)
     {
         _context = context;
     }
 
-    private readonly AppDbContext _context;
-
-
-    public List<AssetTransaction>? GetAll(int? page = 1)
+    public List<AssetTransaction>? GetAll(Guid userId, int page = 0, int pageSize = 10)
     {
-        var query = _context.AssetTransactions.AsQueryable();
-        int pageSize = 10;
-
-        if (page != null)
-            query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
+        var query = _context.AssetTransactions
+            .Where(x => x.UserId == userId)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .AsQueryable();
 
         return query.ToList();
     }

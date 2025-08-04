@@ -136,7 +136,6 @@ Abaixo estão listadas as principais rotas da aplicação, agrupadas por funçã
 |--------|-------------------|-----------------------------------------|--------------|
 | POST   | `/users/login`    | Login do usuário                        | ❌            |
 | POST   | `/users`          | Criação de novo usuário                 | ❌            |
-| PUT    | `/users`          | Atualização dos próprios dados          | ✅ (User)    |
 | PUT    | `/users/change-password` | Atualização da própria senha     | ✅ (User)    |
 | PUT    | `/users/change-email` | Atualização do própria email        | ✅ (User)    |
 | DELETE | `/users`          | Exclusão da própria conta               | ✅ (User)    |
@@ -161,7 +160,7 @@ Abaixo estão listadas as principais rotas da aplicação, agrupadas por funçã
 | POST   | `/users/assets`        | Adicionar as primeiras unidades de um ativo      | ✅ (User)     |
 | PUT    | `/users/assets`        | Atualizar unidades de um ativo                   | ✅ (User)     |
 
-### Health (`/users/assets`)
+### Health
 
 | Método | Rota                   | Descrição                           | Autenticação |
 |--------|------------------------|-------------------------------------|--------------|

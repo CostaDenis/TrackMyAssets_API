@@ -1,4 +1,3 @@
-
 namespace TrackMyAssets_API.Domain.ViewModels;
 
 public record AssetViewModel

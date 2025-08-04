@@ -2,7 +2,7 @@ namespace TrackMyAssets_API.Domain.Entities.Interfaces;
 
 public interface IAssetService
 {
-    List<Asset> GetAll(int page = 0, int pageSize = 10);
+    List<Asset> GetAll(int page = 1, int pageSize = 10);
     Asset? GetById(Guid id);
     Asset? GetByName(string name);
     void Create(Asset asset);

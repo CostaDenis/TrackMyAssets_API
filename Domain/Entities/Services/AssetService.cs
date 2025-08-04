@@ -12,10 +12,10 @@ public class AssetService : IAssetService
         _context = context;
     }
 
-    public List<Asset> GetAll(int page = 0, int pageSize = 10)
+    public List<Asset> GetAll(int page = 1, int pageSize = 10)
     {
         var query = _context.Assets.AsQueryable();
-        query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
+        query = query.Skip((page - 1) * pageSize).Take(pageSize);
 
         return query.ToList();
     }

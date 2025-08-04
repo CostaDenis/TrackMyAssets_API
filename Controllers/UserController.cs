@@ -14,7 +14,7 @@ namespace TrackMyAssets_API.Controllers;
 
 [ApiController]
 [Authorize(Roles = "User")]
-[Route(("users"))]
+[Route("users")]
 public class UserController : ControllerBase
 {
 
@@ -37,7 +37,7 @@ public class UserController : ControllerBase
         var user = _userService.Login(login);
 
         if (user == null)
-            return Unauthorized();
+            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
 
         string token = _tokenService.GenerateTokenJwt(user.Id, user.Email, "User");
 
@@ -87,14 +87,11 @@ public class UserController : ControllerBase
         [FromServices] ITokenService _tokenService
     )
     {
-        var userId = _tokenService.GetUserId(HttpContext);
-
-        if (userId == null)
-            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
+        var userId = _tokenService.GetUserId(this.HttpContext);
 
         try
         {
-            var user = _userService.GetById(userId.Value);
+            var user = _userService.GetById(userId);
             var result = _userService.UpdateEmail(user!, updateEmailDTO);
 
             if (!result.Success)
@@ -120,14 +117,11 @@ public class UserController : ControllerBase
         [FromServices] ITokenService _tokenService
     )
     {
-        var userId = _tokenService.GetUserId(HttpContext);
-
-        if (userId == null)
-            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
+        var userId = _tokenService.GetUserId(this.HttpContext);
 
         try
         {
-            var user = _userService.GetById(userId.Value);
+            var user = _userService.GetById(userId);
             var result = _userService.UpdatePassword(user!, updatePasswordDTO);
 
             if (!result.Success)
@@ -147,14 +141,11 @@ public class UserController : ControllerBase
         [FromServices] ITokenService _tokenService
     )
     {
-        var userId = _tokenService.GetUserId(HttpContext);
-
-        if (userId == null)
-            return Unauthorized(new ResultViewModel<LoggedUserViewModel>("Acesso negado!"));
+        var userId = _tokenService.GetUserId(this.HttpContext);
 
         try
         {
-            var user = _userService.GetById(userId.Value);
+            var user = _userService.GetById(userId);
             _userService.DeleteOwnUser(user!);
 
             return Ok(new ResultViewModel<UserViewModel>("Usuário excluído com sucesso!"));

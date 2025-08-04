@@ -17,10 +17,10 @@ public class TokenService : ITokenService
         _configuration = configuration;
     }
 
-    public Guid? GetUserId(HttpContext http)
+    public Guid GetUserId(HttpContext http)
     {
         var claim = http.User.FindFirst(ClaimTypes.NameIdentifier);
-        return Guid.TryParse(claim?.Value, out var id) ? id : null;
+        return Guid.Parse(claim!.Value);
     }
 
     public string GenerateTokenJwt(Guid id, string email, string role)
