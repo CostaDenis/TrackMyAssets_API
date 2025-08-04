@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,9 @@ var key = builder.Configuration["Jwt"];
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
                              builder.Configuration.GetConnectionString("DefaultConnection"); ;
 
+var cultureInfo = new CultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -40,6 +44,7 @@ builder.Services.AddScoped<IAdministratorService, AdministratorService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IUserAssetService, UserAssetService>();
+builder.Services.AddScoped<IAssetTransactionService, AssetTransactionService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 //Adiciona Swagger

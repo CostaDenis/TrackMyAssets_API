@@ -83,12 +83,12 @@ public class UserAssetController : ControllerBase
     [HttpPost]
     public IActionResult AddUnits(
         [FromBody] UserAssetAddDTO userAssetDTO,
-        IAssetService assetService
+        IAssetService _assetService
     )
     {
         var userId = _tokenService.GetUserId(this.HttpContext);
 
-        if (assetService.GetById(userAssetDTO.AssetId) == null)
+        if (_assetService.GetById(userAssetDTO.AssetId) == null)
             return NotFound(new ResultViewModel<UserAssetViewModel>("Ativo não encontrado!"));
 
         try
@@ -105,22 +105,22 @@ public class UserAssetController : ControllerBase
 
     }
 
-    [HttpPost]
-    public IActionResult UpdateUnits(
-        [FromBody] UserAssetUpdateDTO userAssetDTO
-    )
-    {
-        var userId = _tokenService.GetUserId(this.HttpContext);
+    // [HttpPost]
+    // public IActionResult UpdateUnits(
+    //     [FromBody] UserAssetUpdateDTO userAssetDTO
+    // )
+    // {
+    //     var userId = _tokenService.GetUserId(this.HttpContext);
 
-        try
-        {
-            var result = _userAssetService.RemoveUnits(userAssetDTO.AssetId, userId, userAssetDTO.Units, userAssetDTO.Note);
-            return Ok(new ResultViewModel<AssetTransaction>(result));
-        }
-        catch
-        {
-            return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
-        }
+    //     try
+    //     {
+    //         var result = _userAssetService.RemoveUnits(userAssetDTO.AssetId, userId, userAssetDTO.Units, userAssetDTO.Note);
+    //         return Ok(new ResultViewModel<AssetTransaction>(result));
+    //     }
+    //     catch
+    //     {
+    //         return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
+    //     }
 
-    }
+    // }
 }
