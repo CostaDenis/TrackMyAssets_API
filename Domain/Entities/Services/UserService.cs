@@ -6,6 +6,7 @@ using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
+using TrackMyAssets_API.Domain.Exceptions;
 
 namespace TrackMyAssets_API.Domain.Entities.Services;
 
@@ -39,7 +40,12 @@ public class UserService : IUserService
     {
 
         if (_context.Users.Any(x => x.Email == email))
-            throw new InvalidOperationException("E-mail já está em uso.");
+            throw new EmailAlreadyExistsException(email);
+
+        var emaildmin = _context.Administrators.Any(x => x.Email == email);
+
+        if (emaildmin)
+            throw new AdminEmailConflitException(email);
 
         var user = new User
         {
