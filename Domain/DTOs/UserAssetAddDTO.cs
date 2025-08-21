@@ -6,7 +6,7 @@ public class UserAssetAddDTO
 {
     public Guid AssetId { get; set; }
 
-    [Range(0.0001, (double)Decimal.MaxValue)]
+    // [Range(0.0001, (double)Decimal.MaxValue)]
     public decimal Units { get; set; }
     public string? Note { get; set; }
 }

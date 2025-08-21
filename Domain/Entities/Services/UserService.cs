@@ -45,7 +45,7 @@ public class UserService : IUserService
         var emaildmin = _context.Administrators.Any(x => x.Email == email);
 
         if (emaildmin)
-            throw new AdminEmailConflitException(email);
+            throw new AdminEmailConflitException("O e-mail não pode ser igual ao do administrador.");
 
         var user = new User
         {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
+using TrackMyAssets_API.Domain.Exceptions;
 using TrackMyAssets_API.Domain.ViewModels;
 
 namespace TrackMyAssets_API.Controllers;
@@ -87,6 +88,18 @@ public class UserAssetController : ControllerBase
             var result = _userAssetService.AddTransaction(userAssetDTO.AssetId, userId, userAssetDTO.Units, userAssetDTO.Note);
 
             return Ok(new ResultViewModel<AssetTransaction>(result));
+        }
+        catch (UnitsZeroException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (UnitsMaxException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (InvalidIdException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
         }
         catch
         {

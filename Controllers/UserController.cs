@@ -8,6 +8,7 @@ using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
+using TrackMyAssets_API.Domain.Exceptions;
 using TrackMyAssets_API.Domain.ViewModels;
 
 namespace TrackMyAssets_API.Controllers;
@@ -69,9 +70,13 @@ public class UserController : ControllerBase
                                 Email = user.Email
                             });
         }
-        catch (DbUpdateException)
+        catch (EmailAlreadyExistsException ex)
         {
-            return StatusCode(400, new ResultViewModel<string>("Esse email já está sendo utilizado na aplicação!"));
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (AdminEmailConflitException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
         }
         catch
         {
