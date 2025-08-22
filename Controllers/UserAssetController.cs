@@ -34,7 +34,7 @@ public class UserAssetController : ControllerBase
         var userAssets = _userAssetService.GetUserAssets(userId);
         var userAssetsViewModel = new List<UserAssetViewModel>();
 
-        if (userAssets == null)
+        if (userAssets.Count == 0)
             return NotFound(new ResultViewModel<UserAssetViewModel>("Sem ativos no momento!"));
 
         foreach (var usr in userAssets)
@@ -89,11 +89,11 @@ public class UserAssetController : ControllerBase
 
             return Ok(new ResultViewModel<AssetTransaction>(result));
         }
-        catch (UnitsZeroException ex)
+        catch (ZeroUnitsException ex)
         {
             return StatusCode(400, new ResultViewModel<string>(ex.Message));
         }
-        catch (UnitsMaxException ex)
+        catch (MaxUnitsException ex)
         {
             return StatusCode(400, new ResultViewModel<string>(ex.Message));
         }

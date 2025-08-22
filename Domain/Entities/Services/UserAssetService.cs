@@ -27,10 +27,10 @@ public class UserAssetService : IUserAssetService
     public AssetTransaction AddTransaction(Guid assetId, Guid userId, decimal units, string? note = null)
     {
         if (units == 0)
-            throw new UnitsZeroException("As unidades não podem ser zero!");
+            throw new ZeroUnitsException("As unidades não podem ser zero!");
 
         if (units > Decimal.MaxValue)
-            throw new UnitsMaxException("As unidades não podem ser maior que '79,228,162,514,264,337,593,543,950,335'!");
+            throw new MaxUnitsException("As unidades não podem ser maior que '79,228,162,514,264,337,593,543,950,335'!");
 
         if (CheckData(assetId, userId) == false)
             throw new InvalidIdException("Erro. Confira os IDs!");
@@ -38,7 +38,7 @@ public class UserAssetService : IUserAssetService
         var currentUnits = GetAssetAmount(assetId, userId);
 
         if (units < 0 && currentUnits + units < 0)
-            throw new InsufficientBalance("Saldo insuficiente para remover essa quantidade de unidades.");
+            throw new InsufficientBalanceException("Saldo insuficiente para remover essa quantidade de unidades.");
 
         var asset = _context.Assets.Find(assetId)!;
         var user = _context.Users.Find(userId)!;
@@ -54,6 +54,28 @@ public class UserAssetService : IUserAssetService
         };
 
         _context.AssetTransactions.Add(assetTransaction);
+
+        var userAsset = _context.UserAssets.FirstOrDefault
+        (x => x.UserId == userId && x.AssetId == assetId);
+
+        if (userAsset == null)
+        {
+            userAsset = new UserAsset
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                AssetId = assetId,
+                Units = 0
+            };
+
+            _context.UserAssets.Add(userAsset);
+        }
+
+        userAsset.Units += units;
+
+        if (userAsset.Units < 0)
+            throw new InsufficientBalanceException("Quantidade de unidades não pode ser negativa!");
+
         _context.SaveChanges();
 
         return assetTransaction;
