@@ -14,15 +14,16 @@ Atualmente, a API suporta os seguintes tipos de ativos:
 
 ## Tecnologias utilizadas
 
-![Static Badge](https://img.shields.io/badge/DotNet-512BD4.svg?style=for-the-badge&logo=dotnet&logoColor=ffffff)
-![Static Badge](https://img.shields.io/badge/CSharp-512BD4.svg?style=for-the-badge&logo=sharp&logoColor=ffffff)
-![Static Badge](https://img.shields.io/badge/Swagger-%85ea2d.svg?style=for-the-badge&logo=swagger&logoColor=ffffff)
-![Static Badge](https://img.shields.io/badge/Entity_Framework-512BD4.svg?style=for-the-badge)
-![Static Badge](https://img.shields.io/badge/SQL_Database-2B579A.svg?style=for-the-badge)
-![Static Badge](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge)
-![Static Badge](https://img.shields.io/badge/Azure-2496ED.svg?style=for-the-badge&logoColor=ffffff)
-![Static Badge](https://img.shields.io/badge/JWT-1b1b33.svg?style=for-the-badge&logoColor=ffffff)
-![Static Badge](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=ffffff)
+![.NET](https://img.shields.io/badge/DotNet-512BD4.svg?style=for-the-badge&logo=dotnet&logoColor=ffffff)
+![C#](https://img.shields.io/badge/CSharp-512BD4.svg?style=for-the-badge&logo=sharp&logoColor=ffffff)
+![Swagger](https://img.shields.io/badge/Swagger-%85ea2d.svg?style=for-the-badge&logo=swagger&logoColor=ffffff)
+![Postman](https://img.shields.io/badge/Postman-ff713d.svg?style=for-the-badge&logo=postman&logoColor=ffffff)
+![Entity Framework](https://img.shields.io/badge/Entity_Framework-512BD4.svg?style=for-the-badge)
+![SQL](https://img.shields.io/badge/SQL_Database-2B579A.svg?style=for-the-badge)
+![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge)
+![Azure](https://img.shields.io/badge/Azure-2496ED.svg?style=for-the-badge&logoColor=ffffff)
+![JWT](https://img.shields.io/badge/JWT-1b1b33.svg?style=for-the-badge&logoColor=ffffff)
+![Render](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=ffffff)
 
 ## Funcionalidades
 
@@ -158,7 +159,6 @@ Abaixo estão listadas as principais rotas da aplicação, agrupadas por funçã
 | GET    | `/users/assets`        | Listar todos os ativos do usuário                | ✅ (User)     |
 | GET    | `/users/assets/{id}`   | Detalhes de um ativo do usuário                  | ✅ (User)     |
 | POST   | `/users/assets`        | Adicionar as primeiras unidades de um ativo      | ✅ (User)     |
-| PUT    | `/users/assets`        | Atualizar unidades de um ativo                   | ✅ (User)     |
 
 ### Health
 

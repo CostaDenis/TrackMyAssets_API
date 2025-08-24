@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
@@ -101,8 +102,14 @@ public class UserAssetController : ControllerBase
         {
             return StatusCode(400, new ResultViewModel<string>(ex.Message));
         }
-        catch
+        catch (DbUpdateException ex)
         {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.GetType().Name); // Loga o tipo da exception
+            Console.WriteLine(ex.Message);        // Loga a mensagem
             return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
         }
 

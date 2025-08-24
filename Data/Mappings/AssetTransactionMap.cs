@@ -21,7 +21,7 @@ public class AssetTransactionMap : IEntityTypeConfiguration<AssetTransaction>
         builder.Property(x => x.UnitsChanged)
         .IsRequired()
         .HasColumnName("UnitsChanged")
-        .HasColumnType("DECIMAL(18,2)");
+        .HasColumnType("DECIMAL(18,8)");
 
         builder.Property(x => x.Date)
         .IsRequired()

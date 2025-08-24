@@ -21,7 +21,7 @@ public class UserAssetMap : IEntityTypeConfiguration<UserAsset>
 
         builder.Property(x => x.Units)
         .IsRequired()
-        .HasColumnType("DECIMAL(18,2)")
+        .HasColumnType("DECIMAL(18,8)")
         .HasDefaultValue(0);
 
         builder.HasOne(x => x.User)
