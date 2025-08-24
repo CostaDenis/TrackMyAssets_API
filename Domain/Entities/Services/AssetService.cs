@@ -28,6 +28,9 @@ public class AssetService : IAssetService
 
     public void Create(Asset asset)
     {
+        var assetSymbol = (asset.Symbol == "string") ? null : asset.Symbol;
+        asset.Symbol = assetSymbol;
+
         _context.Assets.Add(asset);
         _context.SaveChanges();
     }

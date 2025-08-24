@@ -12,7 +12,7 @@ public interface IAdministratorService
     User? GetUserById(Guid id);
     Administrator? Login(LoginDTO loginDTO);
     void Update(Administrator administrator);
-    ResultViewModel<string> UpdatePassword(Administrator administrator, UpdatePasswordDTO updatePasswordDTO);
+    void UpdatePassword(Administrator administrator, UpdatePasswordDTO updatePasswordDTO);
     void DeleteUser(User id);
     bool VerifyPassword(Administrator administrator, string hashedPassword, string providerPassword);
 

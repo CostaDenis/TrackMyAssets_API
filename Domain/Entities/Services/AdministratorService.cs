@@ -79,7 +79,7 @@ public class AdministratorService : IAdministratorService
         _context.SaveChanges();
     }
 
-    public ResultViewModel<string> UpdatePassword(Administrator administrator, UpdatePasswordDTO updatePasswordDTO)
+    public void UpdatePassword(Administrator administrator, UpdatePasswordDTO updatePasswordDTO)
     {
         if (!VerifyPassword(administrator, administrator.Password, updatePasswordDTO.CurrentPassword))
             return new ResultViewModel<string>("Verificação falha da senha atual!");

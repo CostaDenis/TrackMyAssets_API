@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Exceptions;
@@ -16,6 +17,7 @@ public class UserAssetService : IUserAssetService
 
     public List<UserAsset> GetUserAssets(Guid userId)
         => _context.UserAssets
+            .Include(x => x.Asset)
             .Where(x => x.UserId == userId)
             .ToList();
 
@@ -42,6 +44,8 @@ public class UserAssetService : IUserAssetService
 
         var asset = _context.Assets.Find(assetId)!;
         var user = _context.Users.Find(userId)!;
+        var transactionType = (units < 0) ? "Removal" : "Addition";
+        var noteType = (note == "string") ? null : note;
 
         var assetTransaction = new AssetTransaction
         {
@@ -49,8 +53,9 @@ public class UserAssetService : IUserAssetService
             Asset = asset,
             UserId = userId,
             User = user,
+            Type = transactionType,
             UnitsChanged = units,
-            Note = note
+            Note = noteType
         };
 
         _context.AssetTransactions.Add(assetTransaction);

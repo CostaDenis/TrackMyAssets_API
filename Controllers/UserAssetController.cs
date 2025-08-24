@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
+using TrackMyAssets_API.Domain.Enums;
 using TrackMyAssets_API.Domain.Exceptions;
 using TrackMyAssets_API.Domain.ViewModels;
 
@@ -40,11 +41,16 @@ public class UserAssetController : ControllerBase
 
         foreach (var usr in userAssets)
         {
+            var units = _userAssetService.GetAssetAmount(usr.AssetId, usr.UserId);
+
+            if (usr.Asset!.Type == EAsset.Stock || usr.Asset!.Type == EAsset.RealStateFund)
+                units = Math.Round(units, 0);
+
             userAssetsViewModel.Add(new UserAssetViewModel
             {
                 UserId = usr.UserId,
                 AssetId = usr.AssetId,
-                Units = _userAssetService.GetAssetAmount(usr.AssetId, usr.UserId)
+                Units = units
             });
         }
 
@@ -75,7 +81,7 @@ public class UserAssetController : ControllerBase
 
     [HttpPost]
     public IActionResult AddTransaction(
-        [FromBody] UserAssetAddDTO userAssetDTO,
+        [FromBody] UserAssetDTO userAssetDTO,
         IAssetService _assetService
     )
     {
@@ -106,10 +112,8 @@ public class UserAssetController : ControllerBase
         {
             return StatusCode(400, new ResultViewModel<string>(ex.Message));
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine(ex.GetType().Name); // Loga o tipo da exception
-            Console.WriteLine(ex.Message);        // Loga a mensagem
             return StatusCode(500, new ResultViewModel<string>("Falha interna no servidor!"));
         }
 

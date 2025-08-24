@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TrackMyAssets_API.Domain.DTOs;
 
-public class UserAssetAddDTO
+public class UserAssetDTO
 {
     public Guid AssetId { get; set; }
     public decimal Units { get; set; }

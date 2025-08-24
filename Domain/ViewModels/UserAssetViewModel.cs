@@ -1,4 +1,6 @@
 
+using TrackMyAssets_API.Domain.Enums;
+
 namespace TrackMyAssets_API.Domain.ViewModels;
 
 public record UserAssetViewModel
@@ -6,4 +8,5 @@ public record UserAssetViewModel
     public Guid UserId { get; set; }
     public Guid AssetId { get; set; }
     public decimal Units { get; set; }
+    public EAsset AssetType { get; set; }
 }

@@ -16,6 +16,6 @@ public class AssetTransaction
     public User? User { get; set; }
     public decimal UnitsChanged { get; set; }  // Positivo para adições, negativo para remoções
     public DateTime Date { get; set; }
-    public string Type { get; set; } = "Addition";
+    public string Type { get; set; } = string.Empty;
     public string? Note { get; set; }
 }
