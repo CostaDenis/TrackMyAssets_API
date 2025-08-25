@@ -1,6 +1,5 @@
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.DTOs;
@@ -45,7 +44,7 @@ public class UserService : IUserService
         var emaildmin = _context.Administrators.Any(x => x.Email == email);
 
         if (emaildmin)
-            throw new AdminEmailConflitException("O e-mail não pode ser igual ao do administrador.");
+            throw new AdminEmailConflitException("O email não pode ser igual ao do administrador.");
 
         var user = new User
         {
@@ -68,55 +67,37 @@ public class UserService : IUserService
         _context.SaveChanges();
     }
 
-    public ResultViewModel<string> UpdatePassword(User user, UpdatePasswordDTO updatePasswordDTO)
+    public void UpdatePassword(User user, UpdatePasswordDTO updatePasswordDTO)
     {
         if (!VerifyPassword(user, user.Password, updatePasswordDTO.CurrentPassword))
-            return new ResultViewModel<string>("Verificação falha da senha atual!");
+            throw new InvalidPasswordException("Erro ao conferir a atual senha");
 
         if (updatePasswordDTO.NewPassword != updatePasswordDTO.NewPasswordConfirmation)
-            return new ResultViewModel<string>("Confirmação falha da nova senha!");
+            throw new PasswordConfirmationMismatchException("Erro ao confirmar a nova senha");
 
         if (VerifyPassword(user, user.Password, updatePasswordDTO.NewPassword))
-            return new ResultViewModel<string>("A nova senha não pode ser igual à anterior.");
+            throw new PasswordReuseException("A nova senha não pode ser igual à anterior.");
 
-        try
-        {
-            var hasher = new PasswordHasher<User>();
-            user.Password = hasher.HashPassword(user, updatePasswordDTO.NewPassword);
-            Update(user);
-            return new ResultViewModel<string>(data: "Senha atualizada com sucesso!");
-        }
-        catch
-        {
-            return new ResultViewModel<string>("Falha interna no servidor!");
-        }
+        var hasher = new PasswordHasher<User>();
+        user.Password = hasher.HashPassword(user, updatePasswordDTO.NewPassword);
+        Update(user);
     }
 
-    public ResultViewModel<string> UpdateEmail(User user, UpdateEmailDTO updateEmailDTO)
+    public void UpdateEmail(User user, UpdateEmailDTO updateEmailDTO)
     {
         if (user.Email == updateEmailDTO.NewEmail)
-            return new ResultViewModel<string>("O novo email não pode ser igual à anterior.");
+            throw new EmailReuseException("O novo email não pode ser igual à anterior.");
+
+        if (updateEmailDTO.NewEmail != updateEmailDTO.NewEmailConfirmation)
+            throw new EmailConfirmationMismatchException("Erro ao confirmar o email");
 
         var emaildmin = _context.Administrators.Any(x => x.Email == updateEmailDTO.NewEmail);
 
         if (emaildmin)
-            return new ResultViewModel<string>("O novo email não pode ser igual ao email do Administrador!.");
+            throw new AdminEmailConflitException("O email não pode ser igual ao do administrador.");
 
         user.Email = updateEmailDTO.NewEmail;
-
-        try
-        {
-            Update(user);
-            return new ResultViewModel<string>(data: "Email atualizado com sucesso!");
-        }
-        catch (DbUpdateException)
-        {
-            return new ResultViewModel<string>("Email já em uso");
-        }
-        catch
-        {
-            return new ResultViewModel<string>("Falha interna no servidor!");
-        }
+        Update(user);
     }
 
     public void DeleteOwnUser(User user)

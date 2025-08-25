@@ -1,10 +1,8 @@
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrackMyAssets_API.Domain.DTOs;
-using TrackMyAssets_API.Domain.Entities;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
@@ -97,12 +95,20 @@ public class UserController : ControllerBase
         try
         {
             var user = _userService.GetById(userId);
-            var result = _userService.UpdateEmail(user!, updateEmailDTO);
-
-            if (!result.Success)
-                return BadRequest(result);
-
-            return Ok(result);
+            _userService.UpdateEmail(user!, updateEmailDTO);
+            return Ok(new ResultViewModel<string>(data: "Atualização do email concluída com sucesso!"));
+        }
+        catch (EmailReuseException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (EmailConfirmationMismatchException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (AdminEmailConflitException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
         }
         catch (DbUpdateException)
         {
@@ -127,12 +133,20 @@ public class UserController : ControllerBase
         try
         {
             var user = _userService.GetById(userId);
-            var result = _userService.UpdatePassword(user!, updatePasswordDTO);
-
-            if (!result.Success)
-                return BadRequest(result);
-
-            return Ok(result);
+            _userService.UpdatePassword(user!, updatePasswordDTO);
+            return Ok(new ResultViewModel<string>(data: "Atualização da senha concluída com sucesso!"));
+        }
+        catch (InvalidPasswordException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (PasswordConfirmationMismatchException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (PasswordReuseException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
         }
         catch
         {
@@ -153,7 +167,7 @@ public class UserController : ControllerBase
             var user = _userService.GetById(userId);
             _userService.DeleteOwnUser(user!);
 
-            return Ok(new ResultViewModel<UserViewModel>("Usuário excluído com sucesso!"));
+            return Ok(new ResultViewModel<string>(data: "Usuário excluído com sucesso!"));
         }
         catch
         {

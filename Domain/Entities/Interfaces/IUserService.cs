@@ -12,8 +12,8 @@ public interface IUserService
     User? Login(LoginDTO loginDTO);
     User Create(string email, string password);
     void Update(User user);
-    ResultViewModel<string> UpdatePassword(User user, UpdatePasswordDTO updatePasswordDTO);
-    ResultViewModel<string> UpdateEmail(User user, UpdateEmailDTO updateEmailDTO);
+    void UpdatePassword(User user, UpdatePasswordDTO updatePasswordDTO);
+    void UpdateEmail(User user, UpdateEmailDTO updateEmailDTO);
     void DeleteOwnUser(User user);
     bool VerifyPassword(User user, string hashedPassword, string providerPassword);
     int CountUser();

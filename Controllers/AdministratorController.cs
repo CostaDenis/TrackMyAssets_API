@@ -6,6 +6,7 @@ using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
 using TrackMyAssets_API.Domain.Entities.Services;
+using TrackMyAssets_API.Domain.Exceptions;
 using TrackMyAssets_API.Domain.ViewModels;
 
 namespace TrackMyAssets_API.Controllers;
@@ -125,12 +126,20 @@ public class AdministratorController : ControllerBase
         try
         {
             var administrator = _administratorService.GetAdministrator(admId);
-            var result = _administratorService.UpdatePassword(administrator!, updatePasswordDTO);
-
-            if (!result.Success)
-                return BadRequest(result);
-
-            return Ok(result);
+            _administratorService.UpdatePassword(administrator!, updatePasswordDTO);
+            return Ok(new ResultViewModel<string>(data: "Atualização da senha concluída com sucesso!"));
+        }
+        catch (InvalidPasswordException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (PasswordConfirmationMismatchException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
+        }
+        catch (PasswordReuseException ex)
+        {
+            return StatusCode(400, new ResultViewModel<string>(ex.Message));
         }
         catch
         {

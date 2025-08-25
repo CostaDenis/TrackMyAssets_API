@@ -6,6 +6,7 @@ using TrackMyAssets_API.Data;
 using TrackMyAssets_API.Domain.DTOs;
 using TrackMyAssets_API.Domain.Entities.DTOs;
 using TrackMyAssets_API.Domain.Entities.Interfaces;
+using TrackMyAssets_API.Domain.Exceptions;
 
 namespace TrackMyAssets_API.Domain.Entities.Services;
 
@@ -82,25 +83,17 @@ public class AdministratorService : IAdministratorService
     public void UpdatePassword(Administrator administrator, UpdatePasswordDTO updatePasswordDTO)
     {
         if (!VerifyPassword(administrator, administrator.Password, updatePasswordDTO.CurrentPassword))
-            return new ResultViewModel<string>("Verificação falha da senha atual!");
+            throw new InvalidPasswordException("Erro ao conferir a atual senha");
 
         if (updatePasswordDTO.NewPassword != updatePasswordDTO.NewPasswordConfirmation)
-            return new ResultViewModel<string>("Confirmação falha da nova senha!");
+            throw new PasswordConfirmationMismatchException("Erro ao confirmar a nova senha");
 
         if (VerifyPassword(administrator, administrator.Password, updatePasswordDTO.NewPassword))
-            return new ResultViewModel<string>("A nova senha não pode ser igual à anterior.");
+            throw new PasswordReuseException("A nova senha não pode ser igual à anterior.");
 
-        try
-        {
-            var hasher = new PasswordHasher<Administrator>();
-            administrator.Password = hasher.HashPassword(administrator, updatePasswordDTO.NewPassword);
-            Update(administrator);
-            return new ResultViewModel<string>(data: "Senha atualizada com sucesso!");
-        }
-        catch
-        {
-            return new ResultViewModel<string>("Falha interna no servidor!");
-        }
+        var hasher = new PasswordHasher<Administrator>();
+        administrator.Password = hasher.HashPassword(administrator, updatePasswordDTO.NewPassword);
+        Update(administrator);
     }
 
     public void DeleteUser(User user)
