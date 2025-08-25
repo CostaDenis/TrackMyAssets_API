@@ -12,8 +12,8 @@ using TrackMyAssets_API.Data;
 namespace TrackMyAssets_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250824184908_UpdateUnits")]
-    partial class UpdateUnits
+    [Migration("20250825224759_CreateDatabase")]
+    partial class CreateDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,14 +49,6 @@ namespace TrackMyAssets_API.Migrations
                         .IsUnique();
 
                     b.ToTable("Administrators", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b1de5536-f740-480b-a686-76ae1c39f53c"),
-                            Email = "adm@teste.com",
-                            Password = "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA=="
-                        });
                 });
 
             modelBuilder.Entity("TrackMyAssets_API.Domain.Entities.Asset", b =>

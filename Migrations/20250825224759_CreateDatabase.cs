@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackMyAssets_API.Migrations
 {
     /// <inheritdoc />
-    public partial class EmailUnique : Migration
+    public partial class CreateDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,7 +58,7 @@ namespace TrackMyAssets_API.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UnitsChanged = table.Column<decimal>(type: "DECIMAL(18,2)", nullable: false),
+                    UnitsChanged = table.Column<decimal>(type: "DECIMAL(18,8)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     Type = table.Column<string>(type: "VARCHAR(20)", maxLength: 20, nullable: false),
                     Note = table.Column<string>(type: "NVARCHAR(500)", maxLength: 500, nullable: true)
@@ -87,7 +87,7 @@ namespace TrackMyAssets_API.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Units = table.Column<decimal>(type: "DECIMAL(18,2)", nullable: false, defaultValue: 0m)
+                    Units = table.Column<decimal>(type: "DECIMAL(18,8)", nullable: false, defaultValue: 0m)
                 },
                 constraints: table =>
                 {
@@ -105,11 +105,6 @@ namespace TrackMyAssets_API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.InsertData(
-                table: "Administrators",
-                columns: new[] { "Id", "Email", "Password" },
-                values: new object[] { new Guid("4615c7c6-cd30-4afc-ac3a-759ededfcf7f"), "adm@teste.com", "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA==" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Administrator_Email",

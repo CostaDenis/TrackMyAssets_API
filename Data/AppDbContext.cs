@@ -21,13 +21,13 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Administrator>().HasData(
-            new Administrator
-            {
-                Email = "adm@teste.com",
-                Password = "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA=="
-            }
-        );
+        // modelBuilder.Entity<Administrator>().HasData(
+        //     new Administrator
+        //     {
+        //         Email = "adm@teste.com",
+        //         Password = "AQAAAAIAAYagAAAAEC9OuKj8Axx4BT2qIe47xaon8XM1Nyv2HW38v30wSNL+JAmH4c3pl9ufIIX0bSoVJA=="
+        //     }
+        // );
 
         //Usando Fluent Mapping
         modelBuilder.ApplyConfiguration(new AdministratorMap());

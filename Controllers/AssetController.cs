@@ -197,7 +197,7 @@ public class AssetController : ControllerBase
         try
         {
             _assetService.Delete(asset);
-            return NotFound(new ResultViewModel<AssetViewModel>("Ativo excluído com sucesso!"));
+            return NotFound(new ResultViewModel<string>(data: "Ativo excluído com sucesso!"));
         }
         catch
         {

@@ -163,7 +163,7 @@ public class AdministratorController : ControllerBase
         {
             _administratorService.DeleteUser(user);
 
-            return Ok(new ResultViewModel<UserViewModel>("Usuário excluído com sucesso!"));
+            return Ok(new ResultViewModel<string>(data: "Usuário excluído com sucesso!"));
         }
         catch
         {

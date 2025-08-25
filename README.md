@@ -240,7 +240,7 @@ Para testar as funcionalidades do perfil de Administrador, siga os passos abaixo
 2. Gere o hash dessa senha em um projeto separado. Exemplo:
 ![Hash](docs/hash.png)
 
-3. Copie o valor gerado e cole no arquivo ./Infrastructure/Data/AppDbContext.cs, no campo Password da criação do administrador:
+3. Descomente o código e copie o valor gerado e cole no arquivo ./Data/AppDbContext.cs, no campo Password da criação do administrador:
 ![AppDbContext](docs/AppDbContext.png)
 
 Agora você já pode fazer login como Administrador utilizando o e-mail adm@teste.com e a senha correspondente ao hash que você definiu.
